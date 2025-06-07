@@ -13,64 +13,53 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            // pastikan path ini cocok dengan lokasi di resources
+            // Load the login view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
             Parent root = loader.load();
-            primaryStage.setTitle("ElderGuard - Login");
+
+            // Configure the primary stage
+            primaryStage.setTitle("ElderGuard - Healthcare Management System");
             primaryStage.setScene(new Scene(root));
-            primaryStage.setWidth(500);
-            primaryStage.setHeight(500);
+            primaryStage.setWidth(750);
+            primaryStage.setHeight(750);
+            primaryStage.setResizable(true);
+            primaryStage.centerOnScreen();
+
+            // Show the application
             primaryStage.show();
-            primaryStage.getScene().getRoot().requestLayout();
 
-
-            System.out.println("ElderGuard application started successfully!");
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Gagal memuat tampilan utama.");
+            System.err.println("Failed to load the main application view: " + e.getMessage());
         }
     }
 
     public static void main(String[] args) {
-        System.out.println("Starting ElderGuard application...");
-
-        // Test database connection
+        // Test database connection before launching the application
         testDatabaseConnection();
 
-        // Launch JavaFX application
-        System.out.println("Launching JavaFX application...");
+        // Launch the JavaFX application
         launch(args);
     }
 
     private static void testDatabaseConnection() {
-        try {
-            System.out.println("Testing database connection...");
-            Connection conn = DBUtil.getConnection();
+        System.out.println("=== ElderGuard Application Starting ===");
+        System.out.println("Testing database connection...");
+
+        try (Connection conn = DBUtil.getConnection()) {
             if (conn != null && !conn.isClosed()) {
-                System.out.println("✓ Successfully connected to Supabase Database!");
-                conn.close();
+                System.out.println("✓ Database connection successful!");
+                System.out.println("  Connected to: " + conn.getMetaData().getDatabaseProductName());
+                System.out.println("  Database URL: " + DBUtil.getDatabaseInfo());
+            } else {
+                System.out.println("✗ Database connection failed - connection is null or closed");
             }
         } catch (Exception e) {
-            System.err.println("✗ Database connection failed: " + e.getMessage());
-
-            // Check for specific error types and provide helpful messages
-            if (e.getMessage().contains("Wrong password")) {
-                System.err.println("Authentication Error: Please check your database password in the .env file");
-            } else if (e.getMessage().contains("UnknownHostException")) {
-                System.err.println("Network Error: Cannot reach the database server");
-            } else {
-                System.err.println("Database Error: " + e.getCause());
-            }
-
-            System.err.println("");
-            System.err.println("TROUBLESHOOTING TIPS:");
-            System.err.println("1. Check your .env file password (no quotes needed)");
-            System.err.println("2. Verify your Supabase project is active (not paused)");
-            System.err.println("3. Check your internet connection");
-            System.err.println("4. Verify database credentials in Supabase dashboard");
-            System.err.println("");
-            System.err.println("✓ The application will continue without database functionality.");
-            System.err.println("You can fix the database connection later and restart the app.");
+            System.out.println("✗ Database connection failed: " + e.getMessage());
+            System.out.println("  The application will continue but database features may not work properly.");
+            System.out.println("  Please check your .env file and database configuration.");
         }
+
+        System.out.println("=== Starting JavaFX Application ===");
     }
 }
