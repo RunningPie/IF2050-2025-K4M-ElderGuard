@@ -6,7 +6,10 @@
 <?import javafx.scene.text.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #f5f5f5;">
+            fx:controller="controllers.MonitoringController"
+            prefHeight="600.0" prefWidth="800.0"
+            style="-fx-background-color: #f5f5f5;"
+>
 
     <!-- Header -->
     <top>
@@ -40,19 +43,22 @@
                 <Label text="Health Overview" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
                 <Separator/>
                 <GridPane hgap="20" vgap="15">
-                    <Label text="Heart Rate:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                    <Label text="72 BPM" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-text-fill: green;"/>
-
-                    <Label text="Blood Pressure:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                    <Label text="120/80 mmHg" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-text-fill: green;"/>
-
-                    <Label text="Temperature:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                    <Label text="36.5°C" GridPane.rowIndex="2" GridPane.columnIndex="1" style="-fx-text-fill: green;"/>
-
-                    <Label text="Last Updated:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                    <Label text="2 minutes ago" GridPane.rowIndex="3" GridPane.columnIndex="1" style="-fx-text-fill: gray;"/>
+                    <Label text="Heart Rate (BPM)" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-text-fill: black;"/>
+                    <Label fx:id="heartRateLabel" text="72 BPM" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-text-fill: green;"/>
+                    <Label text="Blood Pressure (mmHg)" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-text-fill: black;"/>
+                    <Label fx:id="bloodPressureLabel" text="120/80 mmHg" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-text-fill: green;"/>
+                    <Label text="Body Temp. (°C)" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-text-fill: black;"/>
+                    <Label fx:id="temperatureLabel" text="36.5°C" GridPane.rowIndex="2" GridPane.columnIndex="1" style="-fx-text-fill: green;"/>
+                    <Label fx:id="lastUpdatedLabel" text="2 minutes ago" GridPane.rowIndex="3" GridPane.columnIndex="1" style="-fx-text-fill: gray;"/>
                 </GridPane>
             </VBox>
+
+            <TableView fx:id="sensorTable" prefHeight="200">
+                <columns>
+                    <TableColumn fx:id="typeColumn" text="Sensor Type" prefWidth="200"/>
+                    <TableColumn fx:id="valueColumn" text="Value" prefWidth="150"/>
+                </columns>
+            </TableView>
 
             <!-- Recent Alerts -->
             <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #dee2e6; -fx-border-radius: 5;">
@@ -66,13 +72,12 @@
                 <Label text="Wearable Device Status" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
                 <Separator/>
                 <HBox spacing="20" alignment="CENTER_LEFT">
-                    <Label text="Device:" style="-fx-font-weight: bold;"/>
-                    <Label text="ElderWatch Pro" style="-fx-text-fill: blue;"/>
-                    <Label text="Battery:" style="-fx-font-weight: bold;"/>
-                    <Label text="85%" style="-fx-text-fill: green;"/>
-                    <Label text="Status:" style="-fx-font-weight: bold;"/>
-                    <Label text="Connected" style="-fx-text-fill: green;"/>
+                    <Label fx:id="deviceModelLabel" text="ElderWatch Pro" style="-fx-text-fill: blue;"/>
+                    <Label fx:id="batteryLabel" text="85%" style="-fx-text-fill: green;"/>
+                    <ProgressBar fx:id="batteryBar" prefWidth="150"/>
+                    <Label fx:id="deviceStatusLabel" text="Connected" style="-fx-text-fill: green;"/>
                 </HBox>
+                <Label fx:id="statusLabel" text="Last update: -"/>
             </VBox>
 
         </VBox>

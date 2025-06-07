@@ -17,6 +17,15 @@ import java.util.List;
 
 public class MonitoringController {
 
+    @FXML private Label heartRateLabel;
+    @FXML private Label bloodPressureLabel;
+    @FXML private Label temperatureLabel;
+    @FXML private Label lastUpdatedLabel;
+
+    @FXML private Label deviceModelLabel;
+    @FXML private Label batteryLabel;
+    @FXML private Label deviceStatusLabel;
+
     @FXML
     private TableView<Sensor> sensorTable;
 
@@ -57,5 +66,33 @@ public class MonitoringController {
         // Update info tambahan
         batteryBar.setProgress(device.getBatteryLevel() / 100.0);
         statusLabel.setText("Last update: " + java.time.LocalTime.now().withNano(0));
+
+        // Update label-label di dashboard
+        for (Sensor s : updatedSensors) {
+            System.out.println("Sensor: " + s.getType() + ", " + s.getSensorReadings());
+            switch (s.getType().toLowerCase()) {
+                case "heart rate" -> heartRateLabel.setText(s.getFormattedReading());
+                case "blood pressure" -> bloodPressureLabel.setText(s.getFormattedReading());
+                case "body temp" -> temperatureLabel.setText(s.getFormattedReading());
+            }
+        }
+
+        lastUpdatedLabel.setText("Updated: " + java.time.LocalTime.now().withNano(0));
+        deviceModelLabel.setText(device.getModel());
+
+        // Baterai
+        float battery = device.getBatteryLevel();
+        System.out.println("Battery: " + battery);
+        batteryLabel.setText(String.format("%.0f%%", battery));
+        if (device.isLowBattery()) {
+            batteryLabel.setStyle("-fx-text-fill: red;");
+            deviceStatusLabel.setText("Low Battery");
+            deviceStatusLabel.setStyle("-fx-text-fill: red;");
+        } else {
+            batteryLabel.setStyle("-fx-text-fill: green;");
+            deviceStatusLabel.setText("Connected");
+            deviceStatusLabel.setStyle("-fx-text-fill: green;");
+        }
     }
+
 }

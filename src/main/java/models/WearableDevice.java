@@ -14,6 +14,10 @@ public class WearableDevice {
         this.batteryLevel = batteryLevel;
     }
 
+    public String getModel() {
+        return model;
+    }
+
     public List<Sensor> getSensors() {
         return sensors;
     }
@@ -24,5 +28,9 @@ public class WearableDevice {
 
     public float getBatteryLevel() {
         return batteryLevel;
+    }
+
+    public boolean isLowBattery() {
+        return this.getBatteryLevel() < 10;
     }
 }
