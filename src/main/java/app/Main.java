@@ -24,7 +24,16 @@ public class Main extends Application {
 
             // Configure the primary stage
             primaryStage.setTitle("ElderGuard - Healthcare Management System");
+
+            // Configure the primary stage
+            primaryStage.setTitle("ElderGuard - Healthcare Management System");
             primaryStage.setScene(new Scene(root));
+            primaryStage.setWidth(750);
+            primaryStage.setHeight(750);
+            primaryStage.setResizable(true);
+            primaryStage.centerOnScreen();
+
+            // Show the application
             primaryStage.setWidth(750);
             primaryStage.setHeight(750);
             primaryStage.setResizable(true);
@@ -41,8 +50,10 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         // Test database connection before launching the application
+        // Test database connection before launching the application
         testDatabaseConnection();
 
+        // Launch the JavaFX application
         // Launch the JavaFX application
         launch(args);
     }
@@ -58,6 +69,9 @@ public class Main extends Application {
                 System.out.println("  Database URL: " + DBUtil.getDatabaseInfo());
             } else {
                 System.out.println("✗ Database connection failed - connection is null or closed");
+                System.out.println("✓ Database connection successful!");
+                System.out.println("  Connected to: " + conn.getMetaData().getDatabaseProductName());
+                System.out.println("  Database URL: " + DBUtil.getDatabaseInfo());
             }
         } catch (Exception e) {
             System.out.println("✗ Database connection failed: " + e.getMessage());

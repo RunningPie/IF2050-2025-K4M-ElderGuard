@@ -9,9 +9,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import model.EmergencyAlert;
-import model.UserAccount;
-import model.Role;
+import models.EmergencyAlert;
+import models.UserAccount;
+import models.Role;
 import utils.AlertEventManager;
 import utils.SessionManager;
 

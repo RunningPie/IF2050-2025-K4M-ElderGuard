@@ -1,7 +1,7 @@
 // utils/AlertEventManager.java
 package utils;
 
-import model.EmergencyAlert;
+import models.EmergencyAlert;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
