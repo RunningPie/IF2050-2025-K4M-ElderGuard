@@ -7,19 +7,33 @@ import javafx.stage.Stage;
 import javafx.scene.Parent;
 import utils.DBUtil;
 import java.sql.Connection;
+import services.MonitoringService;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
         try {
+            // Start Monitoring as Background Service
+            MonitoringService monitoringService = new MonitoringService();
+            monitoringService.startMonitoring();
+
             // Load the login view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
             Parent root = loader.load();
 
             // Configure the primary stage
             primaryStage.setTitle("ElderGuard - Healthcare Management System");
+
+            // Configure the primary stage
+            primaryStage.setTitle("ElderGuard - Healthcare Management System");
             primaryStage.setScene(new Scene(root));
+            primaryStage.setWidth(750);
+            primaryStage.setHeight(750);
+            primaryStage.setResizable(true);
+            primaryStage.centerOnScreen();
+
+            // Show the application
             primaryStage.setWidth(750);
             primaryStage.setHeight(750);
             primaryStage.setResizable(true);
@@ -36,8 +50,10 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         // Test database connection before launching the application
+        // Test database connection before launching the application
         testDatabaseConnection();
 
+        // Launch the JavaFX application
         // Launch the JavaFX application
         launch(args);
     }
@@ -53,6 +69,9 @@ public class Main extends Application {
                 System.out.println("  Database URL: " + DBUtil.getDatabaseInfo());
             } else {
                 System.out.println("✗ Database connection failed - connection is null or closed");
+                System.out.println("✓ Database connection successful!");
+                System.out.println("  Connected to: " + conn.getMetaData().getDatabaseProductName());
+                System.out.println("  Database URL: " + DBUtil.getDatabaseInfo());
             }
         } catch (Exception e) {
             System.out.println("✗ Database connection failed: " + e.getMessage());

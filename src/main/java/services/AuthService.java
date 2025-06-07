@@ -1,7 +1,7 @@
 package service;
 
-import model.UserAccount;
-import model.Role;
+import models.UserAccount;
+import models.Role;
 import utils.DBUtil;
 import utils.SessionManager;
 

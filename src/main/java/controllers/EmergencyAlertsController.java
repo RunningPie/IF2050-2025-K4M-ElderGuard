@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,9 +9,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import model.EmergencyAlert;
-import model.UserAccount;
-import model.Role;
+import models.EmergencyAlert;
+import models.UserAccount;
+import models.Role;
+import utils.AlertEventManager;
 import utils.SessionManager;
 
 import java.time.LocalDateTime;
@@ -93,6 +95,20 @@ public class EmergencyAlertsController extends NavigationController {
         setupRoleBasedAccess();
         loadSampleData();
         refreshAlerts();
+
+        AlertEventManager.getInstance().addListener(this::handleIncomingAlert);
+    }
+
+    private void handleIncomingAlert(EmergencyAlert alert) {
+        Platform.runLater(() -> {
+            System.out.println("Incoming alert: " + alert);
+
+            // Add the incoming alert to the list
+            allAlerts.add(alert);
+
+            // Refresh the alerts list and UI
+            refreshAlerts();
+        });
     }
 
     private void setupEmergencyAlertsView() {
@@ -276,7 +292,7 @@ public class EmergencyAlertsController extends NavigationController {
 
     private void loadSampleData() {
         // Sample emergency alerts data
-        allAlerts.clear();
+//        allAlerts.clear();
 
         allAlerts.add(new EmergencyAlert("EA001", "Critical", "Maria Santos",
                 "Heart Attack", "PT001", "Home - Living Room",
@@ -298,20 +314,20 @@ public class EmergencyAlertsController extends NavigationController {
                 "Severe Hypoglycemia", "PT005", "Garden",
                 LocalDateTime.now().minusHours(2), "Resolved"));
 
-        UserAccount currentUser = SessionManager.getCurrentUser();
-        if (currentUser != null && currentUser.getUserRole() == Role.FAMILY) {
-            // For family users, show only family-related alerts
-            // In a real implementation, this would filter based on family group ID
-            List<EmergencyAlert> familyAlerts = new ArrayList<>();
-            familyAlerts.add(allAlerts.get(0)); // Maria Santos
-            familyAlerts.add(allAlerts.get(2)); // Sarah Wilson
-            allAlerts.setAll(familyAlerts);
-        }
+//        UserAccount currentUser = SessionManager.getCurrentUser();
+//        if (currentUser != null && currentUser.getUserRole() == Role.FAMILY) {
+//            // For family users, show only family-related alerts
+//            // In a real implementation, this would filter based on family group ID
+//            List<EmergencyAlert> familyAlerts = new ArrayList<>();
+//            familyAlerts.add(allAlerts.get(0)); // Maria Santos
+//            familyAlerts.add(allAlerts.get(2)); // Sarah Wilson
+//            allAlerts.setAll(familyAlerts);
+//        }
     }
 
     @FXML
     private void refreshAlerts() {
-        loadSampleData(); // In real implementation, this would fetch from database
+//        loadSampleData(); // In real implementation, this would fetch from database
         applyFilter();
         updateStatistics();
     }

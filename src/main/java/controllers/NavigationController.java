@@ -9,8 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import model.UserAccount;
-import model.Role;
+import models.UserAccount;
+import models.Role;
 import security.AccessControlManager;
 import utils.SessionManager;
 

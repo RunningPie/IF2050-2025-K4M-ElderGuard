@@ -1,6 +1,6 @@
 package utils;
 
-import model.Sensor;
+import models.Sensor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,10 @@ public class DataSimulator {
 
     public static List<Sensor> generateDummySensorData() {
         List<Sensor> list = new ArrayList<>();
-        list.add(new Sensor("Heart Rate", 60 + random.nextFloat() * 40));
-        list.add(new Sensor("Blood Pressure", 110 + random.nextFloat() * 20));
-        list.add(new Sensor("Body Temp", 36 + random.nextFloat()));
-        list.add(new Sensor("Oxygen Saturation", 95 + random.nextFloat() * 5));
+        list.add(new Sensor("Heart Rate", 45 + random.nextFloat() * 80));
+        list.add(new Sensor("Blood Pressure", 70 + random.nextFloat() * 120));
+        list.add(new Sensor("Body Temp", 34 + random.nextFloat() * 10));
+        list.add(new Sensor("Oxygen Saturation", 80 + random.nextFloat() * 20));
         return list;
     }
 }

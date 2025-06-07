@@ -9,8 +9,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
-import model.Sensor;
-import model.WearableDevice;
+import models.Sensor;
+import models.WearableDevice;
+import models.EmergencyAlert;
+import utils.AlertEventManager;
 import utils.DataSimulator;
 
 import java.util.List;

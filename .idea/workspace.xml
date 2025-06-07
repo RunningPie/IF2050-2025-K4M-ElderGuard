@@ -4,30 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="486022d2-00b3-4313-af4a-7171d7370936" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/classes/java/main/controller/AuthController.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/classes/java/main/controller/MonitoringController.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/classes/java/main/model/Role.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/classes/java/main/model/Sensor.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/classes/java/main/model/UserAccount.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/classes/java/main/model/WearableDevice.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/classes/java/main/utils/DataSimulator.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/distributions/IF2050-2025-K4M-ElderGuard-1.0.tar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/distributions/IF2050-2025-K4M-ElderGuard-1.0.zip" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/libs/IF2050-2025-K4M-ElderGuard-1.0.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/scripts/IF2050-2025-K4M-ElderGuard" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/scripts/IF2050-2025-K4M-ElderGuard.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/tmp/compileJava/compileTransaction/stash-dir/AuthController.class.uniqueId0" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/tmp/jar/MANIFEST.MF" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/controller/AuthController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/controller/MonitoringController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/model/Sensor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/model/WearableDevice.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/utils/DataSimulator.java" afterDir="false" />
-=======
     <list default="true" id="113c8418-ef13-427d-a1d5-a1664bf070f6" name="Changes" comment="">
+<<<<<<< HEAD
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+=======
       <change afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/IF2050-2025-K4M-ElderGuard.iml" afterDir="false" />
@@ -63,17 +43,12 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/model/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/Role.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/model/UserAccount.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/models/UserAccount.java" afterDir="false" />
 >>>>>>> feat/user
+>>>>>>> feat/user
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-<<<<<<< HEAD
-  <component name="ExternalProjectsData">
-    <projectState path="$PROJECT_DIR$">
-      <ProjectState />
-    </projectState>
   </component>
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
@@ -87,56 +62,40 @@
       </state>
     </system>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Enum" />
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="feat/user" />
-=======
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="main" />
->>>>>>> feat/user
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2yAGwwr7ZUoooSKLsgrU0D5RyBK" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-<<<<<<< HEAD
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Build IF2050-2025-K4M-ElderGuard.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-=======
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "feat/user",
     "kotlin-language-version-configured": "true",
+<<<<<<< HEAD
+    "last_opened_file_path": "D:/EVELYN/SEMESTER 6/Punya ayang/IF2050-2025-K4M-ElderGuard",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
+=======
     "last_opened_file_path": "D:/EVELYN/SEMESTER 6/Punya ayang/IF2050-2025-K4M-ElderGuard"
+>>>>>>> feat/user
 >>>>>>> feat/user
   }
 }]]></component>
@@ -145,17 +104,6 @@
       <recent name="D:\EVELYN\SEMESTER 6\Punya ayang\IF2050-2025-K4M-ElderGuard" />
     </key>
   </component>
-<<<<<<< HEAD
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17011.79" />
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17011.79" />
-      </set>
-    </attachedChunks>
-  </component>
-=======
->>>>>>> feat/user
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -163,39 +111,8 @@
       <created>1749270208610</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-<<<<<<< HEAD
-      <updated>1747703618784</updated>
-      <workItem from="1747703621273" duration="2627000" />
-      <workItem from="1747706387607" duration="51000" />
-      <workItem from="1747706466526" duration="639000" />
-      <workItem from="1747707340930" duration="2580000" />
-      <workItem from="1747709997177" duration="4884000" />
-      <workItem from="1747731519058" duration="1066000" />
-      <workItem from="1749127837447" duration="1055000" />
-      <workItem from="1749197175430" duration="1805000" />
-      <workItem from="1749270842816" duration="3347000" />
-      <workItem from="1749274393538" duration="2349000" />
-    </task>
-    <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-=======
       <updated>1749270208610</updated>
     </task>
     <servers />
   </component>
->>>>>>> feat/user
 </project>

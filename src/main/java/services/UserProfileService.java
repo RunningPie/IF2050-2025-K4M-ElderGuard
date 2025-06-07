@@ -1,8 +1,8 @@
 package service;
 
-import model.UserAccount;
-import model.UserProfile;
-import model.Role;
+import models.UserAccount;
+import models.UserProfile;
+import models.Role;
 import utils.DBUtil;
 
 import java.sql.*;
