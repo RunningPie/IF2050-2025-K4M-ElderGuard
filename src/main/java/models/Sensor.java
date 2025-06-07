@@ -13,8 +13,10 @@ public class Sensor {
         return type;
     }
 
-    public float getSensorReadings() {
-        return sensorReadings;
+    public String getSensorReadings() { return String.format("%.2f", sensorReadings); }
+
+    public String getFormattedReading() {
+        return String.format("%.2f", sensorReadings);
     }
 
     public void setSensorReadings(float value) {

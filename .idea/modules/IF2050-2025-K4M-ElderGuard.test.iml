@@ -7,13 +7,19 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="IF2050-2025-K4M-ElderGuard.main" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:win:21" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:21" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:win:21" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:21" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:win:21" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:21" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:win:21" level="project" />
+    <orderEntry type="library" name="Gradle: org.postgresql:postgresql:42.7.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.github.cdimascio:java-dotenv:5.2.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:win:17.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:17.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:win:17.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:17.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:win:17.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:17.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:win:17.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.checkerframework:checker-qual:3.41.0" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="IF2050-2025-K4M-ElderGuard.main" />
 </module>
