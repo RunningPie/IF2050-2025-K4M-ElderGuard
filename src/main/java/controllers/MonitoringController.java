@@ -3,17 +3,30 @@ package controllers;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
-import models.Sensor;
-import models.WearableDevice;
-import utils.SensorDataSimulator;
+import model.Sensor;
+import model.WearableDevice;
+import model.EmergencyAlert;
+import utils.AlertEventManager;
+import utils.DataSimulator;
 
 import java.util.List;
-import java.util.UUID;
 
 public class MonitoringController {
+
+    @FXML private Label heartRateLabel;
+    @FXML private Label bloodPressureLabel;
+    @FXML private Label temperatureLabel;
+    @FXML private Label lastUpdatedLabel;
+
+    @FXML private Label deviceModelLabel;
+    @FXML private Label batteryLabel;
+    @FXML private Label deviceStatusLabel;
 
     @FXML
     private TableView<Sensor> sensorTable;
@@ -22,46 +35,66 @@ public class MonitoringController {
     private TableColumn<Sensor, String> typeColumn;
 
     @FXML
-    private TableColumn<Sensor, String> readingColumn;
+    private TableColumn<Sensor, Float> valueColumn;
 
     @FXML
-    private TableColumn<Sensor, String> statusColumn;
-
-    @FXML
-    private Label deviceLabel;
+    private Label statusLabel;
 
     @FXML
     private ProgressBar batteryBar;
 
     private WearableDevice device;
-    private List<Sensor> sensors;
 
     @FXML
     public void initialize() {
-        UUID lansiaId = UUID.randomUUID(); // placeholder
-        device = new WearableDevice("Model-X", 88.0f, -6.9f, 107.6f, lansiaId);
-        sensors = SensorDataSimulator.generateSensors(device.getDeviceId());
-
-        deviceLabel.setText("Device: " + device.getModel() + " [" + device.getDeviceId().toString().substring(0, 6) + "]");
-        batteryBar.setProgress(device.getBatteryLevel() / 100.0);
+        device = new WearableDevice("WD-001", "ElderBand Alpha", 100.0f);
 
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
-        readingColumn.setCellValueFactory(cellData -> {
-            return new javafx.beans.property.SimpleStringProperty(cellData.getValue().getFormattedReading());
-        });
-        statusColumn.setCellValueFactory(cellData -> {
-            return new javafx.beans.property.SimpleStringProperty(cellData.getValue().getReadingStatus());
-        });
+        valueColumn.setCellValueFactory(new PropertyValueFactory<>("sensorReadings"));
 
-        sensorTable.getItems().addAll(sensors);
+        refreshSensorData();
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), e -> refreshSensorReadings()));
+        // Simulasi update setiap 5 detik
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), e -> refreshSensorData()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
 
-    private void refreshSensorReadings() {
-        SensorDataSimulator.updateReadings(sensors);
-        sensorTable.refresh();
+    private void refreshSensorData() {
+        List<Sensor> updatedSensors = DataSimulator.generateDummySensorData();
+        device.setSensors(updatedSensors);
+        sensorTable.getItems().setAll(updatedSensors);
+
+        // Update info tambahan
+        batteryBar.setProgress(device.getBatteryLevel() / 100.0);
+        statusLabel.setText("Last update: " + java.time.LocalTime.now().withNano(0));
+
+        // Update label-label di dashboard
+        for (Sensor s : updatedSensors) {
+            System.out.println("Sensor: " + s.getType() + ", " + s.getSensorReadings());
+            switch (s.getType().toLowerCase()) {
+                case "heart rate" -> heartRateLabel.setText(s.getFormattedReading());
+                case "blood pressure" -> bloodPressureLabel.setText(s.getFormattedReading());
+                case "body temp" -> temperatureLabel.setText(s.getFormattedReading());
+            }
+        }
+
+        lastUpdatedLabel.setText("Updated: " + java.time.LocalTime.now().withNano(0));
+        deviceModelLabel.setText(device.getModel());
+
+        // Baterai
+        float battery = device.getBatteryLevel();
+        System.out.println("Battery: " + battery);
+        batteryLabel.setText(String.format("%.0f%%", battery));
+        if (device.isLowBattery()) {
+            batteryLabel.setStyle("-fx-text-fill: red;");
+            deviceStatusLabel.setText("Low Battery");
+            deviceStatusLabel.setStyle("-fx-text-fill: red;");
+        } else {
+            batteryLabel.setStyle("-fx-text-fill: green;");
+            deviceStatusLabel.setText("Connected");
+            deviceStatusLabel.setStyle("-fx-text-fill: green;");
+        }
     }
+
 }
