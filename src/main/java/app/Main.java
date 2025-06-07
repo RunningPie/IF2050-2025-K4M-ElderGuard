@@ -21,6 +21,8 @@ public class Main extends Application {
             primaryStage.setWidth(500);
             primaryStage.setHeight(500);
             primaryStage.show();
+            primaryStage.getScene().getRoot().requestLayout();
+
 
             System.out.println("ElderGuard application started successfully!");
         } catch (Exception e) {
