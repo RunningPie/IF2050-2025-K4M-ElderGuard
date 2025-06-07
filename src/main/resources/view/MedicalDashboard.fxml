@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+           prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: linear-gradient(to bottom right, #11998e 0%, #38ef7d 100%);">
+
+    <!-- Main Dashboard Container -->
+    <BorderPane style="-fx-background-color: #f5f5f5; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-margin: 20;">
+
+        <!-- Header -->
+        <top>
+            <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: #11998e; -fx-padding: 20; -fx-background-radius: 10 10 0 0;">
+                <Label text="ElderGuard - Medical Dashboard" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Welcome, Doctor!" style="-fx-font-size: 14px; -fx-text-fill: white;"/>
+                <Button text="Logout" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 8 15;"/>
+            </HBox>
+        </top>
+
+        <!-- Sidebar -->
+        <left>
+            <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #dee2e6;" prefWidth="200">
+                <Label text="Medical Tools" style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c3e50;"/>
+                <Separator/>
+                <Button text="Patient Overview" prefWidth="160" style="-fx-background-color: #11998e; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+                <Button text="Health Analytics" prefWidth="160" style="-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+                <Button text="Emergency Cases" prefWidth="160" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+                <Button text="Medical Records" prefWidth="160" style="-fx-background-color: #667eea; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+                <Button text="Prescriptions" prefWidth="160" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+                <Button text="Reports" prefWidth="160" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+                <Button text="Settings" prefWidth="160" style="-fx-background-color: #ffc107; -fx-text-fill: black; -fx-background-radius: 5; -fx-padding: 10;"/>
+            </VBox>
+        </left>
+
+        <!-- Main Content -->
+        <center>
+            <VBox spacing="20" style="-fx-padding: 30;">
+
+                <!-- Medical Overview -->
+                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                    <Label text="Patient Overview" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Separator style="-fx-background-color: #e9ecef;"/>
+
+                    <GridPane hgap="40" vgap="15">
+                        <Label text="Active Patients:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #495057;"/>
+                        <Label text="245" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-text-fill: #11998e; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+                        <Label text="Critical Cases:" GridPane.rowIndex="0" GridPane.columnIndex="2" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #495057;"/>
+                        <Label text="3" GridPane.rowIndex="0" GridPane.columnIndex="3" style="-fx-text-fill: #dc3545; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+                        <Label text="Pending Reviews:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #495057;"/>
+                        <Label text="12" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-text-fill: #ffc107; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+                        <Label text="Today's Appointments:" GridPane.rowIndex="1" GridPane.columnIndex="2" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #495057;"/>
+                        <Label text="8" GridPane.rowIndex="1" GridPane.columnIndex="3" style="-fx-text-fill: #28a745; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+                    </GridPane>
+                </VBox>
+
+                <!-- Critical Patients -->
+                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                    <Label text="Critical Patients Requiring Attention" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Separator style="-fx-background-color: #e9ecef;"/>
+
+                    <VBox spacing="10">
+                        <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 15; -fx-background-color: #fff5f5; -fx-border-color: #fc8181; -fx-border-radius: 8; -fx-background-radius: 8;">
+                            <VBox spacing="5">
+                                <Label text="Patient: Maria Santos" style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c3e50;"/>
+                                <Label text="Age: 78 • Condition: Hypertension" style="-fx-font-size: 12px; -fx-text-fill: #6c757d;"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <VBox spacing="5" alignment="CENTER_RIGHT">
+                                <Label text="BP: 180/110" style="-fx-text-fill: #dc3545; -fx-font-weight: bold;"/>
+                                <Label text="Last Reading: 5 min ago" style="-fx-font-size: 11px; -fx-text-fill: #6c757d;"/>
+                            </VBox>
+                            <Button text="Review" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 8 15;"/>
+                        </HBox>
+
+                        <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 15; -fx-background-color: #fffbf0; -fx-border-color: #f6ad55; -fx-border-radius: 8; -fx-background-radius: 8;">
+                            <VBox spacing="5">
+                                <Label text="Patient: John Anderson" style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c3e50;"/>
+                                <Label text="Age: 82 • Condition: Diabetes" style="-fx-font-size: 12px; -fx-text-fill: #6c757d;"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <VBox spacing="5" alignment="CENTER_RIGHT">
+                                <Label text="Glucose: 280 mg/dL" style="-fx-text-fill: #ed8936; -fx-font-weight: bold;"/>
+                                <Label text="Last Reading: 12 min ago" style="-fx-font-size: 11px; -fx-text-fill: #6c757d;"/>
+                            </VBox>
+                            <Button text="Review" style="-fx-background-color: #ed8936; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 8 15;"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- Recent Activity -->
+                <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                    <Label text="Recent Medical Activity" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Separator style="-fx-background-color: #e9ecef;"/>
+
+                    <VBox spacing="8">
+                        <Label text="✓ Reviewed 5 patient records today" style="-fx-text-fill: #28a745; -fx-font-size: 14px;"/>
+                        <Label text="✓ Updated 3 treatment plans" style="-fx-text-fill: #28a745; -fx-font-size: 14px;"/>
+                        <Label text="⚠ 2 patients require follow-up" style="-fx-text-fill: #ffc107; -fx-font-size: 14px;"/>
+                        <Label text="📋 12 pending medical reviews" style="-fx-text-fill: #17a2b8; -fx-font-size: 14px;"/>
+                    </VBox>
+                </VBox>
+
+            </VBox>
+        </center>
+
+        <!-- Footer -->
+        <bottom>
+            <Label text="© 2025 ElderGuard - Medical Care Center"
+                   style="-fx-padding: 15; -fx-font-size: 11px; -fx-text-fill: #6c757d; -fx-background-color: white;"
+                   alignment="CENTER"/>
+        </bottom>
+
+    </BorderPane>
+
+</StackPane><?xml version="1.0" encoding="UTF-8"?>
+
+        <?import javafx.scene.control.*?>
+        <?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+           prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: linear-gradient(to bottom right, #11998e 0%, #38ef7d 100%);">
+
+<!-- Main Dashboard Container -->
+<BorderPane style="-fx-background-color: #f5f5f5; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-margin: 20;">
+
+    <!-- Header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: #11998e; -fx-padding: 20; -fx-background-radius: 10 10 0 0;">
+            <Label text="ElderGuard - Medical Dashboard" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Welcome, Doctor!" style="-fx-font-size: 14px; -fx-text-fill: white;"/>
+            <Button text="Logout" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 8 15;"/>
+        </HBox>
+    </top>
+
+    <!-- Sidebar -->
+    <left>
+        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #dee2e6;" prefWidth="200">
+            <Label text="Medical Tools" style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c3e50;"/>
+            <Separator/>
+            <Button text="Patient Overview" prefWidth="160" style="-fx-background-color: #11998e; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+            <Button text="Health Analytics" prefWidth="160" style="-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+            <Button text="Emergency Cases" prefWidth="160" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+            <Button text="Medical Records" prefWidth="160" style="-fx-background-color: #667eea; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+            <Button text="Prescriptions" prefWidth="160" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+            <Button text="Reports" prefWidth="160" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+            <Button text="Settings" prefWidth="160" style="-fx-background-color: #ffc107; -fx-text-fill: black; -fx-background-radius: 5; -fx-padding: 10;"/>
+        </VBox>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="20" style="-fx-padding: 30;">
+
+            <!-- Medical Overview -->
+            <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                <Label text="Patient Overview" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Separator style="-fx-background-color: #e9ecef;"/>
+
+                <GridPane hgap="40" vgap="15">
+                    <Label text="Active Patients:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #495057;"/>
+                    <Label text="245" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-text-fill: #11998e; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+                    <Label text="Critical Cases:" GridPane.rowIndex="0" GridPane.columnIndex="2" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #495057;"/>
+                    <Label text="3" GridPane.rowIndex="0" GridPane.columnIndex="3" style="-fx-text-fill: #dc3545; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+                    <Label text="Pending Reviews

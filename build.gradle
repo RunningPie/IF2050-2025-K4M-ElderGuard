@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.openjfx.javafxplugin' version '0.0.14'
 }
 
 group = 'org.elderguard'
@@ -13,11 +13,9 @@ repositories {
 }
 
 dependencies {
-    implementation "org.openjfx:javafx-controls:21"
-    implementation "org.openjfx:javafx-fxml:21"
+    implementation 'org.openjfx:javafx-controls:17.0.2'
+    implementation 'org.openjfx:javafx-fxml:17.0.2'
     implementation "org.postgresql:postgresql:42.7.1"
-    implementation "org.openjfx:javafx-controls:21"
-    implementation "org.openjfx:javafx-fxml:21"
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
@@ -26,6 +24,6 @@ application {
 }
 
 javafx {
-    version = "21"
+    version = "17.0.2"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
