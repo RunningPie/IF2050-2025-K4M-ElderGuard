@@ -11,6 +11,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
 import model.Sensor;
 import model.WearableDevice;
+import model.EmergencyAlert;
+import utils.AlertEventManager;
 import utils.DataSimulator;
 
 import java.util.List;

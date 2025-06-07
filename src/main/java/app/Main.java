@@ -7,12 +7,17 @@ import javafx.stage.Stage;
 import javafx.scene.Parent;
 import utils.DBUtil;
 import java.sql.Connection;
+import services.MonitoringService;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
         try {
+            // Start Monitoring as Background Service
+            MonitoringService monitoringService = new MonitoringService();
+            monitoringService.startMonitoring();
+
             // Load the login view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
             Parent root = loader.load();
