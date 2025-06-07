@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/IF2050-2025-K4M-ElderGuard.iml" filepath="$PROJECT_DIR$/.idea/IF2050-2025-K4M-ElderGuard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IF2050-2025-K4M-ElderGuard.iml" filepath="$PROJECT_DIR$/.idea/modules/IF2050-2025-K4M-ElderGuard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IF2050-2025-K4M-ElderGuard.main.iml" filepath="$PROJECT_DIR$/.idea/modules/IF2050-2025-K4M-ElderGuard.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IF2050-2025-K4M-ElderGuard.test.iml" filepath="$PROJECT_DIR$/.idea/modules/IF2050-2025-K4M-ElderGuard.test.iml" />
     </modules>
   </component>
 </project>
