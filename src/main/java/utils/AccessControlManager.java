@@ -172,11 +172,11 @@ public class AccessControlManager {
     public static String getDefaultPageAfterLogin(Role role) {
         switch (role) {
             case FAMILY:
-                return "/view/EmergencyAlert.fxml";
+                return "/view/EmergencyAlertView.fxml";
             case LANSIA:
-                return "/view/LansiaDashboard.fxml";
+                return "/view/LansiaDashboardView.fxml";
             case MEDICAL_STAFF:
-                return "/view/EmergencyAlert.fxml";
+                return "/view/EmergencyAlertView.fxml";
             default:
                 return "/view/LoginView.fxml";
         }
@@ -185,11 +185,11 @@ public class AccessControlManager {
     public static String getDashboardPath(Role role) {
         switch (role) {
             case FAMILY:
-                return "/view/EmergencyAlert.fxml";
+                return "/view/EmergencyAlertView.fxml";
             case LANSIA:
-                return "/view/LansiaDashboard.fxml";
+                return "/view/LansiaDashboardView.fxml";
             case MEDICAL_STAFF:
-                return "/view/EmergencyAlert.fxml";
+                return "/view/EmergencyAlertView.fxml";
             default:
                 return "/view/LoginView.fxml";
         }
