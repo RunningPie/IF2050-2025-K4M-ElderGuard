@@ -1,19 +1,12 @@
 package controllers;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Duration;
 import models.Sensor;
 import models.WearableDevice;
-import models.EmergencyAlert;
-import utils.AlertEventManager;
-import utils.DataSimulator;
+import services.MonitoringService;
 
 import java.util.List;
 
@@ -23,55 +16,34 @@ public class MonitoringController {
     @FXML private Label bloodPressureLabel;
     @FXML private Label temperatureLabel;
     @FXML private Label lastUpdatedLabel;
-
     @FXML private Label deviceModelLabel;
     @FXML private Label batteryLabel;
     @FXML private Label deviceStatusLabel;
+    @FXML private TableView<Sensor> sensorTable;
+    @FXML private TableColumn<Sensor, String> typeColumn;
+    @FXML private TableColumn<Sensor, Float> valueColumn;
+    @FXML private Label statusLabel;
+    @FXML private ProgressBar batteryBar;
 
-    @FXML
-    private TableView<Sensor> sensorTable;
-
-    @FXML
-    private TableColumn<Sensor, String> typeColumn;
-
-    @FXML
-    private TableColumn<Sensor, Float> valueColumn;
-
-    @FXML
-    private Label statusLabel;
-
-    @FXML
-    private ProgressBar batteryBar;
-
-    private WearableDevice device;
+    private MonitoringService monitoringService;
 
     @FXML
     public void initialize() {
-        device = new WearableDevice("WD-001", "ElderBand Alpha", 100.0f);
-
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         valueColumn.setCellValueFactory(new PropertyValueFactory<>("sensorReadings"));
 
-        refreshSensorData();
-
-        // Simulasi update setiap 5 detik
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), e -> refreshSensorData()));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        monitoringService = new MonitoringService();
+        monitoringService.setUpdateListener(device -> {
+            Platform.runLater(() -> updateUI(device));  // <- runLater here
+        });
+        monitoringService.startMonitoring();
     }
 
-    private void refreshSensorData() {
-        List<Sensor> updatedSensors = DataSimulator.generateDummySensorData();
-        device.setSensors(updatedSensors);
+    private void updateUI(WearableDevice device) {
+        List<Sensor> updatedSensors = device.getSensors();
         sensorTable.getItems().setAll(updatedSensors);
 
-        // Update info tambahan
-        batteryBar.setProgress(device.getBatteryLevel() / 100.0);
-        statusLabel.setText("Last update: " + java.time.LocalTime.now().withNano(0));
-
-        // Update label-label di dashboard
         for (Sensor s : updatedSensors) {
-            System.out.println("Sensor: " + s.getType() + ", " + s.getSensorReadings());
             switch (s.getType().toLowerCase()) {
                 case "heart rate" -> heartRateLabel.setText(s.getFormattedReading());
                 case "blood pressure" -> bloodPressureLabel.setText(s.getFormattedReading());
@@ -79,13 +51,12 @@ public class MonitoringController {
             }
         }
 
-        lastUpdatedLabel.setText("Updated: " + java.time.LocalTime.now().withNano(0));
+        batteryBar.setProgress(device.getBatteryLevel() / 100.0);
+        batteryLabel.setText(String.format("%.0f%%", device.getBatteryLevel()));
         deviceModelLabel.setText(device.getModel());
+        lastUpdatedLabel.setText("Updated: " + java.time.LocalTime.now().withNano(0));
+        statusLabel.setText("Last update: " + java.time.LocalTime.now().withNano(0));
 
-        // Baterai
-        float battery = device.getBatteryLevel();
-        System.out.println("Battery: " + battery);
-        batteryLabel.setText(String.format("%.0f%%", battery));
         if (device.isLowBattery()) {
             batteryLabel.setStyle("-fx-text-fill: red;");
             deviceStatusLabel.setText("Low Battery");

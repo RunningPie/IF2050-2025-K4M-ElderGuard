@@ -92,7 +92,7 @@ public class AuthService {
         String insertLansiaQuery = "INSERT INTO lansia (user_id, created_at) VALUES (?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(insertLansiaQuery)) {
-            stmt.setString(1, userId.toString());
+            stmt.setObject(1, userId, java.sql.Types.OTHER);
             stmt.setTimestamp(2, Timestamp.from(java.time.Instant.now()));
             stmt.executeUpdate();
         } catch (SQLException e) {
