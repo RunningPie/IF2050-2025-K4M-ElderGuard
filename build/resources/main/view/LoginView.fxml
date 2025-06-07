@@ -1,160 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<<<<<<< HEAD
-<BorderPane prefHeight="750.0" prefWidth="750.0" style="-fx-background-color: #F5F5F5;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AuthController">
+<StackPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AuthController"
+           prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: linear-gradient(to bottom right, #667eea 0%, #764ba2 100%);">
 
-    <!-- Sidebar -->
-    <left>
-        <VBox alignment="TOP_CENTER" prefWidth="200" spacing="0" style="-fx-background-color: #2E5C96; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 2, 0);">
+    <!-- Main Card Container -->
+    <VBox alignment="CENTER" maxWidth="400" maxHeight="500" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-padding: 50;">
 
-            <!-- Header with logo/title -->
-            <VBox alignment="CENTER" spacing="5" style="-fx-background-color: #1A4A7A; -fx-padding: 20;">
-                <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;" text="ElderGuard">
-                    <font>
-                        <Font name="System Bold" size="24.0" />
-                    </font>
-                </Label>
-                <Label style="-fx-font-size: 12px; -fx-text-fill: #B8CCE8;" text="Care Management System" />
+        <!-- Header Section -->
+        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 0 0 30 0;">
+            <Label text="Welcome Back" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+            <Label text="Sign in to your ElderGuard account" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+        </VBox>
+
+        <!-- Form Section -->
+        <VBox spacing="20" alignment="CENTER" prefWidth="300">
+
+            <!-- Username Field -->
+            <VBox spacing="8">
+                <Label text="Username" style="-fx-font-size: 14px; -fx-font-weight: 500; -fx-text-fill: #2c3e50;"/>
+                <TextField fx:id="usernameField" promptText="Enter your username"
+                           style="-fx-pref-width: 300; -fx-pref-height: 45; -fx-background-color: #f8f9fa; -fx-border-color: #e9ecef; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 12; -fx-font-size: 14px;"/>
             </VBox>
 
-            <!-- Navigation Menu -->
-            <VBox alignment="TOP_LEFT" spacing="2" style="-fx-padding: 10 0 20 0;">
-
-                <!-- Main Menu Label -->
-                <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #8BB3E8; -fx-padding: 15 20 10 20;" text="MAIN MENU" />
-
-                <!-- Menu Items -->
-                <Button prefWidth="200" style="-fx-background-color: #4A7BB8; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 12 20; -fx-background-radius: 0; -fx-border-width: 0; -fx-cursor: hand;" text="📊 Main Menu" />
-
-                <Button onMouseEntered="#handleMenuHover" onMouseExited="#handleMenuExit" prefWidth="200" style="-fx-background-color: transparent; -fx-text-fill: #B8CCE8; -fx-font-size: 14px; -fx-padding: 12 20; -fx-background-radius: 0; -fx-border-width: 0; -fx-cursor: hand;" text="🔔 Notifications" />
-
-                <Button onMouseEntered="#handleMenuHover" onMouseExited="#handleMenuExit" prefWidth="200" style="-fx-background-color: transparent; -fx-text-fill: #B8CCE8; -fx-font-size: 14px; -fx-padding: 12 20; -fx-background-radius: 0; -fx-border-width: 0; -fx-cursor: hand;" text="📋 History" />
-
-                <Button onMouseEntered="#handleMenuHover" onMouseExited="#handleMenuExit" prefWidth="200" style="-fx-background-color: transparent; -fx-text-fill: #B8CCE8; -fx-font-size: 14px; -fx-padding: 12 20; -fx-background-radius: 0; -fx-border-width: 0; -fx-cursor: hand;" text="👤 Account" />
-
+            <!-- Password Field -->
+            <VBox spacing="8">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Password" style="-fx-font-size: 14px; -fx-font-weight: 500; -fx-text-fill: #2c3e50;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="Forgot password?" style="-fx-font-size: 12px; -fx-text-fill: #667eea; -fx-cursor: hand;"/>
+                </HBox>
+                <PasswordField fx:id="passwordField" promptText="Enter your password"
+                               style="-fx-pref-width: 300; -fx-pref-height: 45; -fx-background-color: #f8f9fa; -fx-border-color: #e9ecef; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 12; -fx-font-size: 14px;"/>
             </VBox>
 
-            <!-- Bottom spacer -->
-            <Region VBox.vgrow="ALWAYS" />
+            <!-- Remember Me Checkbox -->
+            <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 5 0 0 0;">
+                <CheckBox style="-fx-text-fill: #7f8c8d; -fx-font-size: 13px;"/>
+                <Label text="Remember me" style="-fx-text-fill: #7f8c8d; -fx-font-size: 13px;"/>
+            </HBox>
 
-            <!-- Footer -->
-            <VBox alignment="CENTER" spacing="5" style="-fx-padding: 20;">
-                <Label style="-fx-font-size: 10px; -fx-text-fill: #7AA3D6;" text="v2.1.0" />
-            </VBox>
+            <!-- Sign In Button -->
+            <Button fx:id="loginButton" text="Sign In" onAction="#handleLogin"
+                    style="-fx-pref-width: 300; -fx-pref-height: 45; -fx-background-color: #667eea; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"/>
+
+            <!-- Error/Success Message -->
+            <Label fx:id="errorLabel" textFill="#e74c3c" wrapText="true" maxWidth="300" alignment="CENTER"
+                   style="-fx-font-size: 13px; -fx-padding: 10 0 0 0;"/>
 
         </VBox>
-    </left>
 
-    <!-- Main Content Area -->
-    <center>
-        <StackPane style="-fx-background-color: #F8F9FA;">
+        <!-- Footer Section -->
+        <VBox alignment="CENTER" spacing="15" style="-fx-padding: 30 0 0 0;">
 
-            <!-- Login Card -->
-            <VBox alignment="CENTER" maxWidth="450" maxHeight="450" spacing="30" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 5); -fx-padding: 50;">
+            <!-- Divider with "OR" -->
+            <HBox alignment="CENTER" spacing="10" prefWidth="300">
+                <Separator style="-fx-pref-width: 120;"/>
+                <Label text="OR" style="-fx-text-fill: #bdc3c7; -fx-font-size: 12px;"/>
+                <Separator style="-fx-pref-width: 120;"/>
+            </HBox>
 
-                <!-- Header -->
-                <VBox alignment="CENTER" spacing="8">
-                    <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;" text="Welcome Back">
-                        <font>
-                            <Font name="System Bold" size="28.0" />
-                        </font>
-                    </Label>
-                    <Label style="-fx-font-size: 14px; -fx-text-fill: #7F8C8D;" text="Sign in to your ElderGuard account" />
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-                </VBox>
+            <!-- Sign Up Link -->
+            <HBox alignment="CENTER" spacing="5">
+                <Label text="Need help?" style="-fx-text-fill: #7f8c8d; -fx-font-size: 13px;"/>
+                <Label text="Contact system administrator" style="-fx-text-fill: #667eea; -fx-font-size: 13px; -fx-cursor: hand; -fx-underline: true;"/>
+            </HBox>
 
-                <!-- Login Form -->
-                <VBox prefWidth="350" spacing="20">
+            <!-- Create Account Button -->
+            <Button fx:id="signUpButton" text="Create New Account" onAction="#handleSignUp"
+                    style="-fx-pref-width: 300; -fx-pref-height: 45; -fx-background-color: transparent; -fx-text-fill: #667eea; -fx-font-size: 14px; -fx-font-weight: 500; -fx-border-color: #667eea; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;"/>
 
-                    <!-- Username Field -->
-                    <VBox spacing="8">
-                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #34495E;" text="Username" />
-                        <TextField fx:id="usernameField" focusTraversable="true" promptText="Enter your username" style="-fx-background-color: #F8F9FA; -fx-border-color: #E9ECEF; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 12; -fx-font-size: 14px; -fx-border-width: 1.5;" />
-                    </VBox>
+        </VBox>
 
-                    <!-- Password Field -->
-                    <VBox spacing="8">
-                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #34495E;" text="Password" />
-                        <PasswordField fx:id="passwordField" focusTraversable="true" promptText="Enter your password" style="-fx-background-color: #F8F9FA; -fx-border-color: #E9ECEF; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 12; -fx-font-size: 14px; -fx-border-width: 1.5;" />
-                    </VBox>
+    </VBox>
 
-                    <!-- Remember Me & Forgot Password -->
-                    <HBox alignment="CENTER_LEFT" spacing="10">
-                        <CheckBox style="-fx-text-fill: #7F8C8D; -fx-font-size: 12px;" text="Remember me" />
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Hyperlink style="-fx-text-fill: #2E5C96; -fx-font-size: 12px;" text="Forgot password?" />
-                    </HBox>
-
-                    <!-- Login Button -->
-                    <Button fx:id="loginButton" onAction="#handleLogin" onMouseEntered="#handleLoginHover" onMouseExited="#handleLoginExit" prefHeight="45" prefWidth="350" style="-fx-background-color: linear-gradient(to bottom, #4A7BB8, #2E5C96); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);" text="Sign In" />
-
-                    <!-- Error Label -->
-                    <Label fx:id="errorLabel" style="-fx-text-fill: #E74C3C; -fx-font-size: 12px; -fx-padding: 5 0 0 0;" wrapText="true" />
-
-                </VBox>
-
-                <!-- Divider -->
-                <VBox alignment="CENTER" spacing="15">
-                    <Separator prefWidth="300" style="-fx-background-color: #E9ECEF;" />
-                    <Label style="-fx-font-size: 12px; -fx-text-fill: #95A5A6;" text="Need help? Contact system administrator" />
-                </VBox>
-
-            </VBox>
-
-        </StackPane>
-    </center>
-
-</BorderPane>
-=======
-<!-- Ini UI yang seharusnya, tapi masih blm implement AuthController, kalo di-run akan error -->
-<!--<?xml version="1.0" encoding="UTF-8"?>-->
-<!--<?import javafx.geometry.*?>-->
-<!--<?import javafx.scene.control.*?>-->
-<!--<?import javafx.scene.image.ImageView?>-->
-<!--<?import javafx.scene.layout.*?>-->
-<!--<?import javafx.scene.text.*?>-->
-<!--<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.AuthController">-->
-<!--&lt;!&ndash; Sidebar &ndash;&gt;-->
-<!--<left>-->
-<!--    <VBox spacing="20" style="-fx-background-color: #0C3C78;" alignment="TOP_CENTER" prefWidth="180">-->
-<!--        <Label text="Elderguard" textFill="white" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>-->
-<!--        <VBox spacing="10" alignment="TOP_LEFT" padding="10">-->
-<!--            <Button text="Dashboard" prefWidth="160" />-->
-<!--            <Button text="Accounts" prefWidth="160" />-->
-<!--            <Button text="Settings" prefWidth="160" />-->
-<!--        </VBox>-->
-<!--    </VBox>-->
-<!--</left>-->
-<!--&lt;!&ndash; Main Content &ndash;&gt;-->
-<!--<center>-->
-<!--    <VBox spacing="20" padding="30">-->
-<!--        <Label text="Login to ElderGuard" style="-fx-font-size: 20px; -fx-font-weight: bold;" />-->
-<!--        <GridPane hgap="10" vgap="15">-->
-<!--            <Label text="Username:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>-->
-<!--            <TextField fx:id="usernameField" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="200"/>-->
-<!--            <Label text="Password:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>-->
-<!--            <PasswordField fx:id="passwordField" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="200"/>-->
-<!--            <Button text="Login" fx:id="loginButton" onAction="#handleLogin" GridPane.rowIndex="2" GridPane.columnIndex="1" />-->
-<!--        </GridPane>-->
-<!--        <Label fx:id="errorLabel" textFill="red" />-->
-<!--    </VBox>-->
-<!--</center>-->
-<!--</BorderPane>-->
-
-<AnchorPane prefHeight="262.0" prefWidth="332.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.2-ea">
-    <children>
-        <Label layoutX="100" layoutY="50" text="Login Page" />
-        <TextField layoutX="100" layoutY="80" promptText="Username" />
-        <PasswordField layoutX="100" layoutY="120" promptText="Password" />
-        <Button layoutX="100" layoutY="160" text="Login" />
-      <Button layoutX="197.0" layoutY="160.0" mnemonicParsing="false" text="Sign Up" />
-    </children>
-</AnchorPane>
->>>>>>> feat/user
+</StackPane>

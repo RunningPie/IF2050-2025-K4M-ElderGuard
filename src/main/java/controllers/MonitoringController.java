@@ -1,4 +1,4 @@
-package controller;
+package controllers;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
