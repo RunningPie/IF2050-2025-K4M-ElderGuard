@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import models.UserAccount;
@@ -35,6 +36,19 @@ public class NavigationController {
 
     @FXML
     private Button logoutButton;
+
+    // Sidebar components
+    @FXML
+    private StackPane sidebarContainer;
+
+    @FXML
+    private VBox expandedSidebar;
+
+    @FXML
+    private VBox collapsedSidebar;
+
+    private boolean sidebarExpanded = true;
+
 
     @FXML
     public void initialize() {
@@ -125,6 +139,16 @@ public class NavigationController {
     }
 
     @FXML
+    private void toggleSidebar() {
+        sidebarExpanded = !sidebarExpanded;
+
+        if (expandedSidebar != null && collapsedSidebar != null) {
+            expandedSidebar.setVisible(sidebarExpanded);
+            collapsedSidebar.setVisible(!sidebarExpanded);
+        }
+    }
+
+    @FXML
     private void handleDashboard() {
         UserAccount currentUser = SessionManager.getCurrentUser();
         if (currentUser == null) {
@@ -133,7 +157,7 @@ public class NavigationController {
         }
 
         Role role = currentUser.getUserRole();
-        if (role != Role.FAMILY && role != Role.LANSIA && role != Role.ADMIN) {
+        if (role != Role.FAMILY && role != Role.LANSIA && role != Role.ADMIN && role != Role.MEDICAL_STAFF)  {
             showAccessDeniedAlert("Dashboard");
             return;
         }
@@ -142,33 +166,6 @@ public class NavigationController {
         navigateToView(dashboardPath, "Dashboard");
     }
 
-    @FXML
-    private void handleEmergencyAlerts() {
-        UserAccount currentUser = SessionManager.getCurrentUser();
-        if (currentUser == null) {
-            showAccessDeniedAlert("Emergency Alerts");
-            return;
-        }
-
-        Role role = currentUser.getUserRole();
-        if (role != Role.FAMILY && role != Role.MEDICAL_STAFF && role != Role.ADMIN) {
-            showAccessDeniedAlert("Emergency Alerts");
-            return;
-        }
-
-        String viewPath;
-        String title;
-
-        if (role == Role.MEDICAL_STAFF || role == Role.ADMIN) {
-            viewPath = "/view/EmergencyAlertsView.fxml";
-            title = "All Emergency Alerts";
-        } else {
-            viewPath = "/view/EmergencyAlertsView.fxml";
-            title = "Family Emergency Alerts";
-        }
-
-        navigateToView(viewPath, title);
-    }
 
     @FXML
     private void handleAccount() {
@@ -178,8 +175,14 @@ public class NavigationController {
             return;
         }
 
-        // All roles can access account management
-        navigateToView("/view/AccountView.fxml", "Account Management");
+        Role role = currentUser.getUserRole();
+        if (role != Role.FAMILY && role != Role.LANSIA && role != Role.ADMIN && role != Role.MEDICAL_STAFF) {
+            showAccessDeniedAlert("Account");
+            return;
+        }
+
+        String dashboardPath = AccessControlManager.getAccountPath(role);
+        navigateToView(dashboardPath, "Account");
     }
 
     @FXML
@@ -234,4 +237,19 @@ public class NavigationController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
+//    @FXML private StackPane sidebarContainer;
+//    @FXML private Button sidebarToggleButton;
+//    private boolean sidebarVisible = true;
+
+//    @FXML
+//    private void toggleSidebar() {
+//        sidebarVisible = !sidebarVisible;
+//        sidebarContainer.setVisible(sidebarVisible);
+//        sidebarContainer.setManaged(sidebarVisible);
+//        sidebarToggleButton.setText(sidebarVisible ? "☰" : "→"); // Optional icon swap
+//    }
+
+
 }

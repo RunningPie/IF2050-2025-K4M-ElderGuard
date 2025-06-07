@@ -25,7 +25,7 @@
                 <!-- Navigation Buttons -->
                 <VBox spacing="12">
 
-                    <Button fx:id="emergencyAlertsButton" alignment="CENTER_LEFT" onAction="#handleEmergencyAlerts" prefWidth="210" prefHeight="45"
+                    <Button fx:id="emergencyAlertsButton" alignment="CENTER_LEFT" onAction="#handleDashboard" prefWidth="210" prefHeight="45"
                             style="-fx-background-color: linear-gradient(to right, #ffffff 0%, #f8f9fa 100%); -fx-text-fill: #0C3C78; -fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 12; -fx-font-weight: bold; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 5, 0, 0, 3);"
                             text="🚨 Emergency Alerts" />
 

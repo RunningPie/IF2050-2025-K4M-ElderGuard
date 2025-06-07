@@ -3,21 +3,23 @@ package controllers;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
-import models.Sensor;
-import models.WearableDevice;
-import models.EmergencyAlert;
+import models.*;
 import utils.AlertEventManager;
 import utils.DataSimulator;
+import utils.SessionManager;
 
+import java.io.IOException;
 import java.util.List;
 
-public class MonitoringController {
+public class MonitoringController extends NavigationController{
 
     @FXML private Label heartRateLabel;
     @FXML private Label bloodPressureLabel;

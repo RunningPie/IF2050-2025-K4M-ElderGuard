@@ -18,8 +18,19 @@ import service.UserProfileService;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
-public class AccountController extends NavigationController{
+public class LansiaAccountController extends NavigationController{
 
+    @FXML
+    private VBox expandedSidebar;
+
+    @FXML
+    private VBox collapsedSidebar;
+
+    @FXML
+    private Button toggleSidebarButton;
+
+    @FXML
+    private Button toggleSidebarButtonCollapsed;
 
     // Navigation buttons (expanded)
     @FXML
@@ -77,9 +88,10 @@ public class AccountController extends NavigationController{
     private UserAccount currentUser;
     private UserProfile currentProfile;
     private boolean editMode = false;
-    private String originalName, originalCity, originalState, originalPhone;
+    private boolean sidebarExpanded = true;
+    private String originalName, originalPhone;
 
-    public AccountController() {
+    public LansiaAccountController() {
         this.authService = new AuthService();
         this.profileService = new UserProfileService();
     }
@@ -110,36 +122,16 @@ public class AccountController extends NavigationController{
 
         // Show buttons based on role requirements
         switch (role) {
-            case FAMILY:
-                // FAMILY: Dashboard, Emergency Alert, Account
-                showNavigationButton(dashboardButton, dashboardButtonCollapsed, "Dashboard", "D");
-                showNavigationButton(emergencyAlertsButton, emergencyAlertsButtonCollapsed, "Emergency Alerts", "E");
-                showNavigationButton(accountButton, accountButtonCollapsed, "Account", "A");
-                break;
-
             case LANSIA:
                 // LANSIA: Dashboard, Account
                 showNavigationButton(dashboardButton, dashboardButtonCollapsed, "Dashboard", "D");
-                showNavigationButton(accountButton, accountButtonCollapsed, "Account", "A");
-                break;
-
-            case MEDICAL_STAFF:
-                // MEDICAL_STAFF: Emergency Alert, Account
-                showNavigationButton(emergencyAlertsButton, emergencyAlertsButtonCollapsed, "Emergency Alerts", "E");
-                showNavigationButton(accountButton, accountButtonCollapsed, "Account", "A");
-                break;
-
-            case ADMIN:
-                // ADMIN: All options available
-                showNavigationButton(dashboardButton, dashboardButtonCollapsed, "Dashboard", "D");
-                showNavigationButton(emergencyAlertsButton, emergencyAlertsButtonCollapsed, "Emergency Alerts", "E");
                 showNavigationButton(accountButton, accountButtonCollapsed, "Account", "A");
                 break;
         }
 
         // Highlight current page (Account)
         if (accountButton != null) {
-            accountButton.setStyle("-fx-background-color: #bbcfec; -fx-text-fill: black; -fx-font-size: 14px; -fx-padding: 10; -fx-background-radius: 5; -fx-font-weight: bold;");
+            accountButton.setStyle("-fx-background-color: linear-gradient(to right, #ffffff 0%, #f8f9fa 100%); -fx-text-fill: #0C3C78; -fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 12; -fx-font-weight: bold;");
         }
         if (accountButtonCollapsed != null) {
             accountButtonCollapsed.setStyle("-fx-background-color: #bbcfec; -fx-text-fill: black; -fx-font-size: 16px; -fx-background-radius: 5;");
@@ -171,7 +163,6 @@ public class AccountController extends NavigationController{
             collapsedBtn.setText(collapsedText);
         }
     }
-
 
     private void loadUserData() {
         currentUser = SessionManager.getCurrentUser();
@@ -239,30 +230,6 @@ public class AccountController extends NavigationController{
                 }
                 if (currentProfile.getBatteryLevel() != null) {
                     info.append(" | Battery: ").append(String.format("%.1f%%", currentProfile.getBatteryLevel()));
-                }
-                break;
-
-            case MEDICAL_STAFF:
-                if (currentProfile.getHospitalName() != null) {
-                    info.append(" | Hospital: ").append(currentProfile.getHospitalName());
-                }
-                if (currentProfile.getEmploymentDate() != null) {
-                    info.append(" | Since: ").append(currentProfile.getEmploymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                }
-                break;
-
-            case FAMILY:
-                if (currentProfile.getFamilyMemberCount() != null) {
-                    info.append(" | Caring for: ").append(currentProfile.getFamilyMemberCount()).append(" elderly member(s)");
-                }
-                break;
-
-            case ADMIN:
-                if (currentProfile.getTotalSystemUsers() != null) {
-                    info.append(" | Total Users: ").append(currentProfile.getTotalSystemUsers());
-                }
-                if (currentProfile.getTotalDevices() != null) {
-                    info.append(" | Total Devices: ").append(currentProfile.getTotalDevices());
                 }
                 break;
         }
@@ -400,7 +367,7 @@ public class AccountController extends NavigationController{
 
             // Update profile data
             currentProfile.setUsername(newName);
-
+            currentProfile.setLocationAndPhone(newPhone, "", "");
 
             // Save to database
             boolean success = profileService.updateUserProfile(currentProfile);
@@ -467,11 +434,11 @@ public class AccountController extends NavigationController{
     }
 
     private String getReadOnlyStyle() {
-        return "-fx-background-color: #bbcfec; -fx-border-color: transparent; -fx-background-radius: 5; -fx-padding: 8; -fx-font-size: 13px;";
+        return "-fx-background-color: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%); -fx-border-color: #dee2e6; -fx-border-radius: 12; -fx-background-radius: 12; -fx-padding: 12; -fx-font-size: 14px; -fx-border-width: 2;";
     }
 
     private String getEditableStyle() {
-        return "-fx-background-color: white; -fx-border-color: #007bff; -fx-border-width: 2; -fx-background-radius: 5; -fx-padding: 8; -fx-font-size: 13px;";
+        return "-fx-background-color: white; -fx-border-color: #0C3C78; -fx-border-width: 2; -fx-background-radius: 12; -fx-padding: 12; -fx-font-size: 14px;";
     }
 
     private String getRoleDisplayName(Role role) {
@@ -484,18 +451,28 @@ public class AccountController extends NavigationController{
         }
     }
 
-    private void showSuccessMessage(String message) {
-        if (statusLabel != null) {
-            statusLabel.setText(message);
-            statusLabel.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold; -fx-font-size: 13px;");
+    @FXML
+    private void handleLansiaDashboard() {
+        UserAccount currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) {
+            showErrorMessage("No user session found");
+            return;
         }
-        System.out.println("SUCCESS: " + message);
+
+        Role role = currentUser.getUserRole();
+        if (role != Role.LANSIA) {
+            showErrorMessage("Access denied to Dashboard");
+            return;
+        }
+
+        navigateToView("/view/LansiaDashboard.fxml", "Dashboard");
     }
+
 
     private void showErrorMessage(String message) {
         if (statusLabel != null) {
             statusLabel.setText(message);
-            statusLabel.setStyle("-fx-text-fill: #dc3545; -fx-font-weight: bold; -fx-font-size: 13px;");
+            statusLabel.setStyle("-fx-font-size: 14px; -fx-padding: 15; -fx-background-color: rgba(220,53,69,0.1); -fx-background-radius: 10; -fx-border-color: #dc3545; -fx-border-radius: 10; -fx-border-width: 1; -fx-text-fill: #721c24;");
         }
         System.err.println("ERROR: " + message);
     }
@@ -503,9 +480,17 @@ public class AccountController extends NavigationController{
     private void showInfoMessage(String message) {
         if (statusLabel != null) {
             statusLabel.setText(message);
-            statusLabel.setStyle("-fx-text-fill: #17a2b8; -fx-font-weight: bold; -fx-font-size: 13px;");
+            statusLabel.setStyle("-fx-font-size: 14px; -fx-padding: 15; -fx-background-color: rgba(23,162,184,0.1); -fx-background-radius: 10; -fx-border-color: #17a2b8; -fx-border-radius: 10; -fx-border-width: 1; -fx-text-fill: #0c5460;");
         }
         System.out.println("INFO: " + message);
+    }
+
+    private void showSuccessMessage(String message) {
+        if (statusLabel != null) {
+            statusLabel.setText(message);
+            statusLabel.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold; -fx-font-size: 13px;");
+        }
+        System.out.println("SUCCESS: " + message);
     }
 
 }

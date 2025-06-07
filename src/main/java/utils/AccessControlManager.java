@@ -169,9 +169,6 @@ public class AccessControlManager {
         return menuItems;
     }
 
-    /**
-     * Get the default page path after login based on role
-     */
     public static String getDefaultPageAfterLogin(Role role) {
         switch (role) {
             case FAMILY:
@@ -185,9 +182,6 @@ public class AccessControlManager {
         }
     }
 
-    /**
-     * Get dashboard path based on role
-     */
     public static String getDashboardPath(Role role) {
         switch (role) {
             case FAMILY:
@@ -196,6 +190,19 @@ public class AccessControlManager {
                 return "/view/LansiaDashboard.fxml";
             case MEDICAL_STAFF:
                 return "/view/EmergencyAlert.fxml";
+            default:
+                return "/view/LoginView.fxml";
+        }
+    }
+
+    public static String getAccountPath(Role role) {
+        switch (role) {
+            case FAMILY:
+                return "/view/AccountView.fxml";
+            case LANSIA:
+                return "/view/LansiaAccountView.fxml";
+            case MEDICAL_STAFF:
+                return "/view/AccountView.fxml";
             default:
                 return "/view/LoginView.fxml";
         }
