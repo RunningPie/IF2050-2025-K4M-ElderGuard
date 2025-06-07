@@ -1,6 +1,6 @@
 package utils;
 
-import model.UserAccount;
+import models.UserAccount;
 
 public class SessionManager {
     private static UserAccount currentUser;

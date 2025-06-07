@@ -1,6 +1,6 @@
 package utils;
 
-import model.Sensor;
+import models.Sensor;
 
 import java.util.ArrayList;
 import java.util.List;

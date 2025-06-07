@@ -1,8 +1,8 @@
 package security;
 
-import model.Role;
-import model.Permission;
-import model.UserAccount;
+import models.Role;
+import models.Permission;
+import models.UserAccount;
 import utils.SessionManager;
 import java.util.*;
 

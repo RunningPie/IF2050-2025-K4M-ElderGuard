@@ -1,8 +1,9 @@
 package service;
 
-import model.UserAccount;
-import model.Role;
+import models.UserAccount;
+import models.Role;
 import utils.DBUtil;
+import utils.SessionManager;
 
 import java.sql.*;
 import java.time.ZonedDateTime;
@@ -250,5 +251,9 @@ public class AuthService {
         }
 
         return false;
+    }
+    public void logout() {
+        SessionManager.clearSession();
+        System.out.println("User logged out successfully");
     }
 }

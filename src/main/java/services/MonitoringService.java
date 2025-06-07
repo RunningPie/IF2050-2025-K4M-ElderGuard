@@ -4,11 +4,11 @@ package services;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
-import model.Sensor;
-import model.WearableDevice;
+import models.Sensor;
+import models.WearableDevice;
 import utils.AlertEventManager;
 import utils.DataSimulator;
-import model.EmergencyAlert;
+import models.EmergencyAlert;
 
 import java.time.LocalDateTime;
 import java.util.List;
