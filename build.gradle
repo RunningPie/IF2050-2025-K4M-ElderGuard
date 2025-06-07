@@ -15,6 +15,10 @@ repositories {
 dependencies {
     implementation "org.openjfx:javafx-controls:21"
     implementation "org.openjfx:javafx-fxml:21"
+    implementation "org.postgresql:postgresql:42.7.1"
+    implementation "org.openjfx:javafx-controls:21"
+    implementation "org.openjfx:javafx-fxml:21"
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
 application {

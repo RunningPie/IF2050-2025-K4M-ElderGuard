@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
+import utils.DBUtil;
+import java.sql.Connection;
 
 public class Main extends Application {
 
@@ -26,6 +28,12 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        try (Connection conn = DBUtil.getConnection()) {
+            if (conn != null) {
+                System.out.println("Connected to Supabase Database!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
