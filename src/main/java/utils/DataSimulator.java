@@ -15,7 +15,7 @@ public class DataSimulator {
         list.add(new Sensor("Heart Rate", 45 + random.nextFloat() * 80));
         list.add(new Sensor("Blood Pressure", 70 + random.nextFloat() * 120));
         list.add(new Sensor("Body Temp", 34 + random.nextFloat() * 10));
-        list.add(new Sensor("Oxygen Saturation", 80 + random.nextFloat() * 20));
+//        list.add(new Sensor("Oxygen Saturation", 80 + random.nextFloat() * 20));
         return list;
     }
 }

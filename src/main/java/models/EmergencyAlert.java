@@ -11,13 +11,11 @@ public class EmergencyAlert {
     private String location;
     private LocalDateTime createdAt;
     private String status;
-    private String assignedTo;
-    private LocalDateTime resolvedAt;
-    private String description;
+    private String assignedTo; // <--- Add this field
 
-    public EmergencyAlert(String alertId, String priority, String patientName,
-                         String alertType, String patientId, String location,
-                         LocalDateTime createdAt, String status) {
+    // Constructor with assignedTo
+    public EmergencyAlert(String alertId, String priority, String patientName, String alertType,
+                          String patientId, String location, LocalDateTime createdAt, String status, String assignedTo) {
         this.alertId = alertId;
         this.priority = priority;
         this.patientName = patientName;
@@ -26,6 +24,7 @@ public class EmergencyAlert {
         this.location = location;
         this.createdAt = createdAt;
         this.status = status;
+        this.assignedTo = assignedTo;
     }
 
     // Getters and Setters
@@ -56,9 +55,4 @@ public class EmergencyAlert {
     public String getAssignedTo() { return assignedTo; }
     public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
 
-    public LocalDateTime getResolvedAt() { return resolvedAt; }
-    public void setResolvedAt(LocalDateTime resolvedAt) { this.resolvedAt = resolvedAt; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
 }

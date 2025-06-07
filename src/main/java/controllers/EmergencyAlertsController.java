@@ -14,6 +14,7 @@ import models.UserAccount;
 import models.Role;
 import utils.AlertEventManager;
 import utils.SessionManager;
+import services.EmergencyAlertService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -87,13 +88,15 @@ public class EmergencyAlertsController extends NavigationController {
     private ObservableList<EmergencyAlert> allAlerts = FXCollections.observableArrayList();
     private ObservableList<EmergencyAlert> filteredAlerts = FXCollections.observableArrayList();
 
+    private final EmergencyAlertService emergencyAlertService = new EmergencyAlertService();
+
     @Override
     public void initialize() {
         super.initialize(); // Initialize navigation
         setupEmergencyAlertsView();
         setupTableColumns();
         setupRoleBasedAccess();
-        loadSampleData();
+//        loadSampleData();
         refreshAlerts();
 
         AlertEventManager.getInstance().addListener(this::handleIncomingAlert);
@@ -290,44 +293,12 @@ public class EmergencyAlertsController extends NavigationController {
         }
     }
 
-    private void loadSampleData() {
-        // Sample emergency alerts data
-//        allAlerts.clear();
-
-        allAlerts.add(new EmergencyAlert("EA001", "Critical", "Maria Santos",
-                "Heart Attack", "PT001", "Home - Living Room",
-                LocalDateTime.now().minusMinutes(5), "Active"));
-
-        allAlerts.add(new EmergencyAlert("EA002", "High", "John Anderson",
-                "Fall Detection", "PT002", "Bathroom",
-                LocalDateTime.now().minusMinutes(15), "In Progress"));
-
-        allAlerts.add(new EmergencyAlert("EA003", "Medium", "Sarah Wilson",
-                "Irregular Heartbeat", "PT003", "Bedroom",
-                LocalDateTime.now().minusMinutes(30), "Active"));
-
-        allAlerts.add(new EmergencyAlert("EA004", "Low", "Robert Chen",
-                "Medication Reminder", "PT004", "Kitchen",
-                LocalDateTime.now().minusHours(1), "Resolved"));
-
-        allAlerts.add(new EmergencyAlert("EA005", "Critical", "Emma Davis",
-                "Severe Hypoglycemia", "PT005", "Garden",
-                LocalDateTime.now().minusHours(2), "Resolved"));
-
-//        UserAccount currentUser = SessionManager.getCurrentUser();
-//        if (currentUser != null && currentUser.getUserRole() == Role.FAMILY) {
-//            // For family users, show only family-related alerts
-//            // In a real implementation, this would filter based on family group ID
-//            List<EmergencyAlert> familyAlerts = new ArrayList<>();
-//            familyAlerts.add(allAlerts.get(0)); // Maria Santos
-//            familyAlerts.add(allAlerts.get(2)); // Sarah Wilson
-//            allAlerts.setAll(familyAlerts);
-//        }
-    }
-
     @FXML
     private void refreshAlerts() {
-//        loadSampleData(); // In real implementation, this would fetch from database
+        // Fetch latest alerts from database
+        List<EmergencyAlert> alertsFromDb = emergencyAlertService.getAllAlerts();
+
+        allAlerts.setAll(alertsFromDb); // Update observable list
         applyFilter();
         updateStatistics();
     }
