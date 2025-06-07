@@ -104,7 +104,7 @@ public class AuthController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignUpView.fxml"));
             Parent root = loader.load();
 
-            Stage stage = (Stage) signUpButton.getScene().getWindow();
+            Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("ElderGuard - Sign Up");
 
@@ -177,6 +177,8 @@ public class AuthController {
             Stage stage = (Stage) ((usernameField != null) ? usernameField : signUpButton).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("ElderGuard - Login");
+            stage.getScene().getRoot().requestLayout();
+
 
         } catch (IOException e) {
             showError("Failed to load login page: " + e.getMessage());
@@ -193,6 +195,8 @@ public class AuthController {
             Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("ElderGuard - " + role + " Dashboard");
+            stage.getScene().getRoot().requestLayout();
+
 
         } catch (IOException e) {
             showError("Failed to load dashboard: " + e.getMessage());
