@@ -1,62 +1,201 @@
 package controllers;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import model.UserAccount;
+import model.UserProfile;
 import model.Role;
-import model.Permission;
-import security.AccessControlManager;
 import utils.SessionManager;
 import service.AuthService;
+import service.UserProfileService;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
 
 public class AccountController {
 
-    @FXML private TextField usernameField;
-    @FXML private Label roleLabel;
-    @FXML private Label roleDisplayLabel;
-    @FXML private Label memberSinceLabel;
-    @FXML private Label userIdLabel;
-    @FXML private Label lastLoginLabel;
-    @FXML private Label sessionTimeLabel;
-    @FXML private Label statusLabel;
+    // Sidebar components
+    @FXML
+    private StackPane sidebarContainer;
 
-    @FXML private PasswordField currentPasswordField;
-    @FXML private PasswordField newPasswordField;
-    @FXML private PasswordField confirmPasswordField;
+    @FXML
+    private VBox expandedSidebar;
 
-    @FXML private VBox roleSpecificSection;
-    @FXML private Label roleSpecificTitle;
-    @FXML private VBox roleSpecificContent;
-    @FXML private ListView<String> permissionsList;
+    @FXML
+    private VBox collapsedSidebar;
+
+    @FXML
+    private Button toggleSidebarButton;
+
+    @FXML
+    private Button toggleSidebarButtonCollapsed;
+
+    // Navigation buttons (expanded)
+    @FXML
+    private Button dashboardButton;
+
+    @FXML
+    private Button emergencyAlertsButton;
+
+    @FXML
+    private Button accountButton;
+
+    // Navigation buttons (collapsed)
+    @FXML
+    private Button dashboardButtonCollapsed;
+
+    @FXML
+    private Button emergencyAlertsButtonCollapsed;
+
+    @FXML
+    private Button accountButtonCollapsed;
+
+    // Form fields
+    @FXML
+    private TextField nameField;
+
+    @FXML
+    private TextField phoneField;
+
+    @FXML
+    private PasswordField passwordField;
+
+    @FXML
+    private Button editNameButton;
+
+    @FXML
+    private Button editLocationButton;
+
+    @FXML
+    private Button editPhoneButton;
+
+    @FXML
+    private Button editPasswordButton;
+
+    @FXML
+    private Button saveButton;
+
+    @FXML
+    private Button cancelButton;
+
+    @FXML
+    private Label statusLabel;
 
     private AuthService authService;
+    private UserProfileService profileService;
     private UserAccount currentUser;
-    private Timeline sessionTimer;
+    private UserProfile currentProfile;
+    private boolean editMode = false;
+    private boolean sidebarExpanded = true;
+    private String originalName, originalCity, originalState, originalPhone;
 
     public AccountController() {
         this.authService = new AuthService();
+        this.profileService = new UserProfileService();
     }
 
     @FXML
-    private void initialize() {
+    public void initialize() {
+        // Check if user is logged in
+        if (!SessionManager.isLoggedIn()) {
+            showErrorMessage("No active session found. Please login.");
+            navigateToView("/view/LoginView.fxml", "Login");
+            return;
+        }
+
         loadUserData();
-        setupRoleSpecificContent();
-        loadPermissions();
-        startSessionTimer();
+        setupRoleBasedNavigation();
+    }
+
+    private void setupRoleBasedNavigation() {
+        UserAccount currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) {
+            return;
+        }
+
+        Role role = currentUser.getUserRole();
+
+        // Hide all buttons initially
+        hideAllNavigationButtons();
+
+        // Show buttons based on role requirements
+        switch (role) {
+            case FAMILY:
+                // FAMILY: Dashboard, Emergency Alert, Account
+                showNavigationButton(dashboardButton, dashboardButtonCollapsed, "Dashboard", "D");
+                showNavigationButton(emergencyAlertsButton, emergencyAlertsButtonCollapsed, "Emergency Alerts", "E");
+                showNavigationButton(accountButton, accountButtonCollapsed, "Account", "A");
+                break;
+
+            case LANSIA:
+                // LANSIA: Dashboard, Account
+                showNavigationButton(dashboardButton, dashboardButtonCollapsed, "Dashboard", "D");
+                showNavigationButton(accountButton, accountButtonCollapsed, "Account", "A");
+                break;
+
+            case MEDICAL_STAFF:
+                // MEDICAL_STAFF: Emergency Alert, Account
+                showNavigationButton(emergencyAlertsButton, emergencyAlertsButtonCollapsed, "Emergency Alerts", "E");
+                showNavigationButton(accountButton, accountButtonCollapsed, "Account", "A");
+                break;
+
+            case ADMIN:
+                // ADMIN: All options available
+                showNavigationButton(dashboardButton, dashboardButtonCollapsed, "Dashboard", "D");
+                showNavigationButton(emergencyAlertsButton, emergencyAlertsButtonCollapsed, "Emergency Alerts", "E");
+                showNavigationButton(accountButton, accountButtonCollapsed, "Account", "A");
+                break;
+        }
+
+        // Highlight current page (Account)
+        if (accountButton != null) {
+            accountButton.setStyle("-fx-background-color: #bbcfec; -fx-text-fill: black; -fx-font-size: 14px; -fx-padding: 10; -fx-background-radius: 5; -fx-font-weight: bold;");
+        }
+        if (accountButtonCollapsed != null) {
+            accountButtonCollapsed.setStyle("-fx-background-color: #bbcfec; -fx-text-fill: black; -fx-font-size: 16px; -fx-background-radius: 5;");
+        }
+    }
+
+    private void hideAllNavigationButtons() {
+        setButtonVisibility(dashboardButton, false);
+        setButtonVisibility(emergencyAlertsButton, false);
+        setButtonVisibility(accountButton, false);
+        setButtonVisibility(dashboardButtonCollapsed, false);
+        setButtonVisibility(emergencyAlertsButtonCollapsed, false);
+        setButtonVisibility(accountButtonCollapsed, false);
+    }
+
+    private void setButtonVisibility(Button button, boolean visible) {
+        if (button != null) {
+            button.setVisible(visible);
+        }
+    }
+
+    private void showNavigationButton(Button expandedBtn, Button collapsedBtn, String expandedText, String collapsedText) {
+        if (expandedBtn != null) {
+            expandedBtn.setVisible(true);
+            expandedBtn.setText(expandedText);
+        }
+        if (collapsedBtn != null) {
+            collapsedBtn.setVisible(true);
+            collapsedBtn.setText(collapsedText);
+        }
+    }
+
+    @FXML
+    private void toggleSidebar() {
+        sidebarExpanded = !sidebarExpanded;
+
+        if (expandedSidebar != null && collapsedSidebar != null) {
+            expandedSidebar.setVisible(sidebarExpanded);
+            collapsedSidebar.setVisible(!sidebarExpanded);
+        }
     }
 
     private void loadUserData() {
@@ -66,315 +205,298 @@ public class AccountController {
             return;
         }
 
-        // Populate user information
-        if (usernameField != null) {
-            usernameField.setText(currentUser.getUsername());
-        }
+        try {
+            // Load complete profile data from database
+            currentProfile = profileService.getUserProfile(currentUser.getUserID());
+            if (currentProfile == null) {
+                showErrorMessage("Failed to load user profile from database");
+                return;
+            }
 
-        if (roleLabel != null) {
-            roleLabel.setText("Role: " + getRoleDisplayName(currentUser.getUserRole()));
-        }
+            // Populate form fields with database data
+            populateFormFields();
+            showSuccessMessage("Profile loaded successfully from database");
 
-        if (roleDisplayLabel != null) {
-            roleDisplayLabel.setText(getRoleDisplayName(currentUser.getUserRole()));
-        }
-
-        if (memberSinceLabel != null) {
-            memberSinceLabel.setText(currentUser.getCreatedAt()
-                    .format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
-        }
-
-        if (userIdLabel != null) {
-            userIdLabel.setText(currentUser.getUserID().toString());
-        }
-
-        if (lastLoginLabel != null) {
-            lastLoginLabel.setText("Current session");
+        } catch (Exception e) {
+            showErrorMessage("Error loading user data: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private void setupRoleSpecificContent() {
-        if (currentUser == null || roleSpecificSection == null) return;
+    private void populateFormFields() {
+        if (currentProfile == null) return;
 
-        Role userRole = currentUser.getUserRole();
+        // Set name field
+        if (nameField != null) {
+            String username = currentProfile.getUsername();
+            nameField.setText(username != null ? username : "");
+            originalName = username != null ? username : "";
+        }
 
-        switch (userRole) {
-            case FAMILY:
-                setupFamilySpecificContent();
-                break;
+        // Load phone from database contact_info
+        if (phoneField != null) {
+            String phone = currentProfile.getPhone();
+            phoneField.setText(phone.isEmpty() ? "" : phone);
+            originalPhone = phone.isEmpty() ? "" : phone;
+        }
+
+        if (passwordField != null) {
+            passwordField.setText("••••••••••");
+        }
+
+        // Display role-specific information in status
+        displayRoleSpecificInfo();
+    }
+
+    private void displayRoleSpecificInfo() {
+        if (currentProfile == null) return;
+
+        StringBuilder info = new StringBuilder();
+        info.append("Role: ").append(getRoleDisplayName(currentProfile.getRole()));
+
+        switch (currentProfile.getRole()) {
             case LANSIA:
-                setupLansiaSpecificContent();
-                break;
-            case MEDICAL_STAFF:
-                setupMedicalStaffSpecificContent();
-                break;
-            case ADMIN:
-                setupAdminSpecificContent();
-                break;
-        }
-    }
-
-    private void setupFamilySpecificContent() {
-        if (roleSpecificTitle != null) {
-            roleSpecificTitle.setText("Family Information");
-        }
-
-        if (roleSpecificContent != null) {
-            roleSpecificContent.getChildren().clear();
-
-            Label familyGroupLabel = new Label("Family Group ID: " +
-                    (currentUser.getFamilyGroupId() != null ? currentUser.getFamilyGroupId().toString() : "Not assigned"));
-
-            Label membersLabel = new Label("Family Members: 3 registered");
-            Label alertsLabel = new Label("Emergency Alerts Access: Family members only");
-
-            Button manageFamilyBtn = new Button("Manage Family Members");
-            manageFamilyBtn.setOnAction(e -> showInfoMessage("Family management feature coming soon"));
-
-            roleSpecificContent.getChildren().addAll(familyGroupLabel, membersLabel, alertsLabel, manageFamilyBtn);
-        }
-    }
-
-    private void setupLansiaSpecificContent() {
-        if (roleSpecificTitle != null) {
-            roleSpecificTitle.setText("Personal Health Information");
-        }
-
-        if (roleSpecificContent != null) {
-            roleSpecificContent.getChildren().clear();
-
-            Label healthStatusLabel = new Label("Health Monitoring: Active");
-            Label emergencyContactLabel = new Label("Emergency Contacts: 2 configured");
-            Label medicationLabel = new Label("Medication Reminders: Enabled");
-
-            Button updateHealthBtn = new Button("Update Health Profile");
-            updateHealthBtn.setOnAction(e -> showInfoMessage("Health profile update feature coming soon"));
-
-            roleSpecificContent.getChildren().addAll(healthStatusLabel, emergencyContactLabel, medicationLabel, updateHealthBtn);
-        }
-    }
-
-    private void setupMedicalStaffSpecificContent() {
-        if (roleSpecificTitle != null) {
-            roleSpecificTitle.setText("Medical Staff Information");
-        }
-
-        if (roleSpecificContent != null) {
-            roleSpecificContent.getChildren().clear();
-
-            Label departmentLabel = new Label("Department: Emergency Care");
-            Label licenseLabel = new Label("Medical License: Active");
-            Label patientsLabel = new Label("Assigned Patients: 127");
-            Label shiftsLabel = new Label("Current Shift: Day (08:00 - 20:00)");
-
-            Button updateLicenseBtn = new Button("Update License Information");
-            updateLicenseBtn.setOnAction(e -> showInfoMessage("License update feature coming soon"));
-
-            roleSpecificContent.getChildren().addAll(departmentLabel, licenseLabel, patientsLabel, shiftsLabel, updateLicenseBtn);
-        }
-    }
-
-    private void setupAdminSpecificContent() {
-        if (roleSpecificTitle != null) {
-            roleSpecificTitle.setText("Administrator Information");
-        }
-
-        if (roleSpecificContent != null) {
-            roleSpecificContent.getChildren().clear();
-
-            Label systemAccessLabel = new Label("System Access: Full Administrative");
-            Label usersLabel = new Label("Total Users: 1,247");
-            Label alertsLabel = new Label("System Alerts: 3 pending");
-
-            Button systemManagementBtn = new Button("System Management");
-            systemManagementBtn.setOnAction(e -> showInfoMessage("System management panel coming soon"));
-
-            roleSpecificContent.getChildren().addAll(systemAccessLabel, usersLabel, alertsLabel, systemManagementBtn);
-        }
-    }
-
-    private void loadPermissions() {
-        if (permissionsList == null) return;
-
-        Set<Permission> permissions = AccessControlManager.getCurrentUserPermissions();
-        ObservableList<String> permissionNames = FXCollections.observableArrayList();
-
-        for (Permission permission : permissions) {
-            permissionNames.add("✓ " + getPermissionDisplayName(permission));
-        }
-
-        permissionsList.setItems(permissionNames);
-    }
-
-    private String getPermissionDisplayName(Permission permission) {
-        switch (permission) {
-            case VIEW_DASHBOARD: return "View Dashboard";
-            case VIEW_FAMILY_EMERGENCY_ALERTS: return "View Family Emergency Alerts";
-            case VIEW_ALL_EMERGENCY_ALERTS: return "View All Emergency Alerts";
-            case CREATE_EMERGENCY_ALERT: return "Create Emergency Alerts";
-            case RESPOND_TO_EMERGENCY_ALERT: return "Respond to Emergency Alerts";
-            case VIEW_OWN_ACCOUNT: return "View Own Account";
-            case EDIT_OWN_ACCOUNT: return "Edit Own Account";
-            case VIEW_FAMILY_ACCOUNTS: return "View Family Accounts";
-            case EDIT_FAMILY_ACCOUNTS: return "Edit Family Accounts";
-            case VIEW_ALL_ACCOUNTS: return "View All Accounts";
-            case EDIT_ALL_ACCOUNTS: return "Edit All Accounts";
-            case DELETE_ACCOUNTS: return "Delete Accounts";
-            case MANAGE_USERS: return "Manage Users";
-            case MANAGE_SYSTEM_SETTINGS: return "Manage System Settings";
-            case VIEW_SYSTEM_LOGS: return "View System Logs";
-            default: return permission.toString();
-        }
-    }
-
-    private void startSessionTimer() {
-        // Update session time every minute
-        sessionTimer = new Timeline(new KeyFrame(Duration.minutes(1), e -> updateSessionTime()));
-        sessionTimer.setCycleCount(Timeline.INDEFINITE);
-        sessionTimer.play();
-
-        updateSessionTime();
-    }
-
-    private void updateSessionTime() {
-        if (sessionTimeLabel != null) {
-            long remainingTime = SessionManager.getSessionRemainingTime();
-            long minutes = remainingTime / (1000 * 60);
-            sessionTimeLabel.setText(minutes + " minutes");
-
-            if (minutes < 5) {
-                sessionTimeLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
-            } else if (minutes < 10) {
-                sessionTimeLabel.setStyle("-fx-text-fill: #f39c12; -fx-font-weight: bold;");
-            } else {
-                sessionTimeLabel.setStyle("-fx-text-fill: #27ae60;");
-            }
-        }
-    }
-
-    @FXML
-    private void updateProfile() {
-        try {
-            AccessControlManager.requirePermission(Permission.EDIT_OWN_ACCOUNT);
-
-            String newUsername = usernameField.getText().trim();
-            if (newUsername.isEmpty()) {
-                showErrorMessage("Username cannot be empty");
-                return;
-            }
-
-            if (newUsername.length() < 3) {
-                showErrorMessage("Username must be at least 3 characters long");
-                return;
-            }
-
-            // Update username (this would typically update the database)
-            currentUser.setUsername(newUsername);
-
-            showSuccessMessage("Profile updated successfully");
-
-        } catch (SecurityException e) {
-            showErrorMessage("Access denied: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void changePassword() {
-        try {
-            AccessControlManager.requirePermission(Permission.EDIT_OWN_ACCOUNT);
-
-            String currentPassword = currentPasswordField.getText();
-            String newPassword = newPasswordField.getText();
-            String confirmPassword = confirmPasswordField.getText();
-
-            // Validate input
-            if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                showErrorMessage("All password fields are required");
-                return;
-            }
-
-            if (!newPassword.equals(confirmPassword)) {
-                showErrorMessage("New passwords do not match");
-                return;
-            }
-
-            if (newPassword.length() < 6) {
-                showErrorMessage("New password must be at least 6 characters long");
-                return;
-            }
-
-            // Verify current password
-            if (!authService.verifyPassword(currentUser.getUsername(), currentPassword)) {
-                showErrorMessage("Current password is incorrect");
-                return;
-            }
-
-            // Update password (this would typically update the database)
-            boolean success = authService.updatePassword(currentUser.getUsername(), newPassword);
-
-            if (success) {
-                currentUser.setPassword(newPassword);
-
-                // Clear password fields
-                currentPasswordField.clear();
-                newPasswordField.clear();
-                confirmPasswordField.clear();
-
-                showSuccessMessage("Password changed successfully");
-            } else {
-                showErrorMessage("Failed to update password");
-            }
-
-        } catch (SecurityException e) {
-            showErrorMessage("Access denied: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void extendSession() {
-        SessionManager.refreshSession();
-        updateSessionTime();
-        showSuccessMessage("Session extended successfully");
-    }
-
-    @FXML
-    private void endSession() {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("End Session");
-        confirm.setHeaderText("Are you sure you want to end your session?");
-        confirm.setContentText("You will be logged out and redirected to the login page.");
-
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                if (sessionTimer != null) {
-                    sessionTimer.stop();
+                if (currentProfile.getBirthdate() != null) {
+                    info.append(" | Born: ").append(currentProfile.getBirthdate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                 }
-                SessionManager.clearSession();
-                navigateToLogin();
+                if (currentProfile.getDeviceModel() != null) {
+                    info.append(" | Device: ").append(currentProfile.getDeviceModel());
+                }
+                if (currentProfile.getBatteryLevel() != null) {
+                    info.append(" | Battery: ").append(String.format("%.1f%%", currentProfile.getBatteryLevel()));
+                }
+                break;
+
+            case MEDICAL_STAFF:
+                if (currentProfile.getHospitalName() != null) {
+                    info.append(" | Hospital: ").append(currentProfile.getHospitalName());
+                }
+                if (currentProfile.getEmploymentDate() != null) {
+                    info.append(" | Since: ").append(currentProfile.getEmploymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                }
+                break;
+
+            case FAMILY:
+                if (currentProfile.getFamilyMemberCount() != null) {
+                    info.append(" | Caring for: ").append(currentProfile.getFamilyMemberCount()).append(" elderly member(s)");
+                }
+                break;
+
+            case ADMIN:
+                if (currentProfile.getTotalSystemUsers() != null) {
+                    info.append(" | Total Users: ").append(currentProfile.getTotalSystemUsers());
+                }
+                if (currentProfile.getTotalDevices() != null) {
+                    info.append(" | Total Devices: ").append(currentProfile.getTotalDevices());
+                }
+                break;
+        }
+
+        showInfoMessage(info.toString());
+    }
+
+    @FXML
+    private void editName() {
+        toggleEditMode();
+        if (nameField != null) {
+            nameField.setEditable(editMode);
+            nameField.setStyle(editMode ? getEditableStyle() : getReadOnlyStyle());
+            if (editMode) nameField.requestFocus();
+        }
+    }
+
+    @FXML
+    private void editPhone() {
+        toggleEditMode();
+        if (phoneField != null) {
+            phoneField.setEditable(editMode);
+            phoneField.setStyle(editMode ? getEditableStyle() : getReadOnlyStyle());
+            if (editMode) phoneField.requestFocus();
+        }
+    }
+
+    @FXML
+    private void editPassword() {
+        // Create a dialog for password change
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Change Password");
+        dialog.setHeaderText("Enter your current and new password");
+
+        // Create the dialog content
+        VBox content = new VBox(12);
+        content.setStyle("-fx-padding: 15;");
+
+        PasswordField currentPasswordField = new PasswordField();
+        currentPasswordField.setPromptText("Current Password");
+        currentPasswordField.setPrefWidth(280);
+        currentPasswordField.setStyle("-fx-font-size: 13px;");
+
+        PasswordField newPasswordField = new PasswordField();
+        newPasswordField.setPromptText("New Password");
+        newPasswordField.setPrefWidth(280);
+        newPasswordField.setStyle("-fx-font-size: 13px;");
+
+        PasswordField confirmPasswordField = new PasswordField();
+        confirmPasswordField.setPromptText("Confirm New Password");
+        confirmPasswordField.setPrefWidth(280);
+        confirmPasswordField.setStyle("-fx-font-size: 13px;");
+
+        Label currentLabel = new Label("Current Password:");
+        currentLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
+
+        Label newLabel = new Label("New Password:");
+        newLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
+
+        Label confirmLabel = new Label("Confirm Password:");
+        confirmLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
+
+        content.getChildren().addAll(
+                currentLabel, currentPasswordField,
+                newLabel, newPasswordField,
+                confirmLabel, confirmPasswordField
+        );
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                String currentPassword = currentPasswordField.getText();
+                String newPassword = newPasswordField.getText();
+                String confirmPassword = confirmPasswordField.getText();
+
+                if (validatePasswordChange(currentPassword, newPassword, confirmPassword)) {
+                    // Update password in database
+                    boolean success = authService.updatePassword(currentUser.getUsername(), newPassword);
+                    if (success) {
+                        showSuccessMessage("Password updated successfully in database");
+                    } else {
+                        showErrorMessage("Failed to update password in database");
+                    }
+                }
             }
         });
     }
 
+    private boolean validatePasswordChange(String currentPassword, String newPassword, String confirmPassword) {
+        if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+            showErrorMessage("All password fields are required");
+            return false;
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            showErrorMessage("New passwords do not match");
+            return false;
+        }
+
+        if (newPassword.length() < 6) {
+            showErrorMessage("New password must be at least 6 characters long");
+            return false;
+        }
+
+        // Verify current password
+        if (!authService.verifyPassword(currentUser.getUsername(), currentPassword)) {
+            showErrorMessage("Current password is incorrect");
+            return false;
+        }
+
+        return true;
+    }
+
     @FXML
-    private void goBack() {
+    private void saveChanges() {
+        if (currentProfile == null) return;
+
         try {
-            if (currentUser != null) {
-                String dashboardPath = getDashboardPath(currentUser.getUserRole());
-                navigateToView(dashboardPath, "Dashboard");
+            // Validate changes
+            String newName = nameField.getText().trim();
+            if (newName.isEmpty()) {
+                showErrorMessage("Name cannot be empty");
+                return;
             }
+
+            String newPhone = phoneField.getText().trim();
+
+            // Validate phone format if provided
+            if (!newPhone.isEmpty() && !UserProfileService.isValidPhone(newPhone)) {
+                showErrorMessage("Invalid phone number format. Use format: +62 812-3456-7890");
+                return;
+            }
+
+            // Update profile data
+            currentProfile.setUsername(newName);
+
+
+            // Save to database
+            boolean success = profileService.updateUserProfile(currentProfile);
+
+            if (success) {
+                // Update session data
+                currentUser.setUsername(newName);
+                currentUser.setContactInfo(currentProfile.getContactInfo());
+
+                // Update original values
+                originalName = newName;
+                originalPhone = newPhone;
+
+                // Reset edit mode
+                exitEditMode();
+
+                showSuccessMessage("Account information updated successfully in database");
+            } else {
+                showErrorMessage("Failed to update account information in database");
+            }
+
         } catch (Exception e) {
-            showErrorMessage("Failed to navigate back: " + e.getMessage());
+            showErrorMessage("Failed to save changes: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private String getDashboardPath(Role role) {
-        switch (role) {
-            case FAMILY: return "/view/FamilyDashboard.fxml";
-            case MEDICAL_STAFF: return "/view/MedicalDashboard.fxml";
-            case LANSIA: return "/view/LansiaDashboard.fxml";
-            case ADMIN: return "/view/AdminDashboard.fxml";
-            default: return "/view/LoginView.fxml";
+    @FXML
+    private void cancelChanges() {
+        // Restore original values
+        if (nameField != null) nameField.setText(originalName);
+        if (phoneField != null) phoneField.setText(originalPhone);
+
+        exitEditMode();
+        showInfoMessage("Changes cancelled");
+    }
+
+    private void toggleEditMode() {
+        editMode = !editMode;
+        updateEditModeUI();
+    }
+
+    private void exitEditMode() {
+        editMode = false;
+        updateEditModeUI();
+    }
+
+    private void updateEditModeUI() {
+        // Update button visibility
+        if (saveButton != null) saveButton.setVisible(editMode);
+        if (cancelButton != null) cancelButton.setVisible(editMode);
+
+        // Reset field styles and editability
+        if (!editMode) {
+            if (nameField != null) {
+                nameField.setEditable(false);
+                nameField.setStyle(getReadOnlyStyle());
+            }
+            if (phoneField != null) {
+                phoneField.setEditable(false);
+                phoneField.setStyle(getReadOnlyStyle());
+            }
         }
+    }
+
+    private String getReadOnlyStyle() {
+        return "-fx-background-color: #bbcfec; -fx-border-color: transparent; -fx-background-radius: 5; -fx-padding: 8; -fx-font-size: 13px;";
+    }
+
+    private String getEditableStyle() {
+        return "-fx-background-color: white; -fx-border-color: #007bff; -fx-border-width: 2; -fx-background-radius: 5; -fx-padding: 8; -fx-font-size: 13px;";
     }
 
     private String getRoleDisplayName(Role role) {
@@ -387,12 +509,58 @@ public class AccountController {
         }
     }
 
+    // Navigation methods
+    @FXML
+    private void handleDashboard() {
+        UserAccount currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) {
+            showErrorMessage("No user session found");
+            return;
+        }
+
+        Role role = currentUser.getUserRole();
+        if (role != Role.FAMILY && role != Role.LANSIA && role != Role.ADMIN) {
+            showErrorMessage("Access denied to Dashboard");
+            return;
+        }
+
+        // Use the universal dashboard for all roles
+        navigateToView("/view/UniversalDashboard.fxml", "Dashboard");
+    }
+
+    @FXML
+    private void handleEmergencyAlerts() {
+        UserAccount currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) {
+            showErrorMessage("No user session found");
+            return;
+        }
+
+        Role role = currentUser.getUserRole();
+        if (role != Role.FAMILY && role != Role.MEDICAL_STAFF && role != Role.ADMIN) {
+            showErrorMessage("Access denied to Emergency Alerts");
+            return;
+        }
+
+        navigateToView("/view/EmergencyAlert.fxml", "Emergency Alerts");
+    }
+
+    @FXML
+    private void handleAccount() {
+        // Already on account page - refresh data from database
+        loadUserData();
+        showInfoMessage("Account data refreshed from database");
+    }
+
+    @FXML
+    private void handleLogout() {
+        authService.logout();
+        navigateToView("/view/LoginView.fxml", "Login");
+    }
+
     private void navigateToView(String fxmlPath, String title) {
         try {
-            if (sessionTimer != null) {
-                sessionTimer.stop();
-            }
-
+            // Use getClass().getResource() to properly load FXML files
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
@@ -402,49 +570,55 @@ public class AccountController {
                 stage.setTitle("ElderGuard - " + title);
                 stage.centerOnScreen();
             }
+
         } catch (IOException e) {
             showErrorMessage("Navigation failed: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            showErrorMessage("Unexpected error during navigation: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private void navigateToLogin() {
-        navigateToView("/view/LoginView.fxml", "Login");
-    }
-
+    // Also fix the getCurrentStage method to be more robust
     private Stage getCurrentStage() {
-        if (usernameField != null && usernameField.getScene() != null) {
-            return (Stage) usernameField.getScene().getWindow();
+        // Try multiple components to get the current stage
+        if (nameField != null && nameField.getScene() != null && nameField.getScene().getWindow() instanceof Stage) {
+            return (Stage) nameField.getScene().getWindow();
         }
+        if (saveButton != null && saveButton.getScene() != null && saveButton.getScene().getWindow() instanceof Stage) {
+            return (Stage) saveButton.getScene().getWindow();
+        }
+        if (statusLabel != null && statusLabel.getScene() != null && statusLabel.getScene().getWindow() instanceof Stage) {
+            return (Stage) statusLabel.getScene().getWindow();
+        }
+
+        // If we can't find the stage, show an error
+        showErrorMessage("Cannot find application window for navigation");
         return null;
     }
 
     private void showSuccessMessage(String message) {
-        showAlert(Alert.AlertType.INFORMATION, "Success", message);
-        updateStatusLabel(message, "-fx-text-fill: #27ae60;");
+        if (statusLabel != null) {
+            statusLabel.setText(message);
+            statusLabel.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold; -fx-font-size: 13px;");
+        }
+        System.out.println("SUCCESS: " + message);
     }
 
     private void showErrorMessage(String message) {
-        showAlert(Alert.AlertType.ERROR, "Error", message);
-        updateStatusLabel(message, "-fx-text-fill: #e74c3c;");
+        if (statusLabel != null) {
+            statusLabel.setText(message);
+            statusLabel.setStyle("-fx-text-fill: #dc3545; -fx-font-weight: bold; -fx-font-size: 13px;");
+        }
+        System.err.println("ERROR: " + message);
     }
 
     private void showInfoMessage(String message) {
-        showAlert(Alert.AlertType.INFORMATION, "Information", message);
-        updateStatusLabel(message, "-fx-text-fill: #3498db;");
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void updateStatusLabel(String message, String style) {
         if (statusLabel != null) {
             statusLabel.setText(message);
-            statusLabel.setStyle(style);
+            statusLabel.setStyle("-fx-text-fill: #17a2b8; -fx-font-weight: bold; -fx-font-size: 13px;");
         }
+        System.out.println("INFO: " + message);
     }
 }
