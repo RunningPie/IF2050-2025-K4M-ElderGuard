@@ -11,22 +11,25 @@
 
     <!-- Header -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: #dc3545; -fx-padding: 15;">
-            <Label fx:id="headerTitle" text="ElderGuard - Emergency Alerts" textFill="white" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <HBox alignment="CENTER_LEFT" prefHeight="75" spacing="20" style="-fx-background-color: #0C3C78; -fx-padding: 15;">
+            <Label text="ElderGuard" textFill="white" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 15;"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="welcomeLabel" text="Welcome, User" textFill="white" style="-fx-font-size: 14px;"/>
-            <Button fx:id="logoutButton" onAction="#handleLogout" text="Logout" style="-fx-background-color: white; -fx-text-fill: #dc3545; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 8 15;"/>
+            <Label text="Welcome, [Username]" textFill="white" style="-fx-font-size: 14px;"/>
+            <Button onAction="#handleLogout" style="-fx-background-color: #0C3C78; -fx-text-fill: white; -fx-font-weight: bold;">
+                <graphic>
+                    <Label text="🚪" style="-fx-font-size: 16px; -fx-text-fill: white;"/>
+                </graphic>
+                Logout
+            </Button>
         </HBox>
     </top>
 
     <!-- Sidebar Navigation -->
     <left>
         <VBox fx:id="navigationMenu" spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-border-color: #dee2e6;" prefWidth="200">
-            <Label text="Navigation" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-            <Separator/>
-            <Button fx:id="dashboardButton" onAction="#handleDashboard" text="Dashboard" prefWidth="160" style="-fx-background-color: #0C3C78; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
-            <Button fx:id="emergencyAlertsButton" onAction="#handleEmergencyAlerts" text="Emergency Alerts" prefWidth="160" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
-            <Button fx:id="accountButton" onAction="#handleAccount" text="Account" prefWidth="160" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+            <Button fx:id="dashboardButton" onAction="#handleDashboard" text="Dashboard" prefWidth="160" style= "-fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+            <Button fx:id="emergencyAlertsButton" onAction="#handleEmergencyAlerts" text="Emergency Alerts" prefWidth="160" style=" -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
+            <Button fx:id="accountButton" onAction="#handleAccount" text="Account" prefWidth="160" style="-fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;"/>
         </VBox>
     </left>
 
