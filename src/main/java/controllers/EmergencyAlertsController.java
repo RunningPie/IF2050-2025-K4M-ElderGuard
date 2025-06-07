@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.layout.StackPane;
+
 
 public class EmergencyAlertsController extends NavigationController {
 
@@ -417,4 +419,16 @@ public class EmergencyAlertsController extends NavigationController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+    @FXML private StackPane sidebarContainer;
+    @FXML private Button sidebarToggleButton;
+    private boolean sidebarVisible = true;
+
+    @FXML
+    private void toggleSidebar() {
+        sidebarVisible = !sidebarVisible;
+        sidebarContainer.setVisible(sidebarVisible);
+        sidebarContainer.setManaged(sidebarVisible);
+        sidebarToggleButton.setText(sidebarVisible ? "☰" : "→"); // Optional icon swap
+    }
+
 }
