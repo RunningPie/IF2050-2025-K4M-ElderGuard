@@ -1,31 +1,24 @@
 package service;
 
-import model.UserAccount;
-import model.Role;
+import models.UserAccount;
+import models.Role;
 import utils.DBUtil;
-import utils.PasswordUtil;
+import utils.SessionManager;
 
 import java.sql.*;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class AuthService {
 
     /**
-     * Authenticates a user with username and password
-     * @param username the username
-     * @param password the plain text password
-     * @return UserAccount object if authentication successful, null otherwise
+     * Authenticate user with username and password
      */
     public UserAccount authenticate(String username, String password) {
-        // Check if database is available
-        if (!DBUtil.isDatabaseAvailable()) {
-            throw new RuntimeException("Database is not available. Please check your database connection and try again.");
-        }
-
-        String sql = "SELECT user_id, username, password, role, created_at FROM user_account WHERE username = ?";
+        String query = "SELECT user_id, username, password, role, created_at FROM user_account WHERE username = ?";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
@@ -33,108 +26,135 @@ public class AuthService {
             if (rs.next()) {
                 String storedPassword = rs.getString("password");
 
-                // Verify password
-                if (PasswordUtil.verifyPassword(password, storedPassword)) {
+                // In production, use proper password hashing (BCrypt, etc.)
+                if (password.equals(storedPassword)) {
                     UUID userId = UUID.fromString(rs.getString("user_id"));
                     String roleString = rs.getString("role");
-                    Role role = Role.valueOf(roleString.toUpperCase());
+                    Role role = Role.valueOf(roleString);
                     Timestamp createdAt = rs.getTimestamp("created_at");
+                    ZonedDateTime zonedCreatedAt = createdAt.toInstant().atZone(java.time.ZoneId.systemDefault());
 
-                    System.out.println("✓ Authentication successful for user: " + username);
-                    return new UserAccount(userId, username, storedPassword, role, createdAt);
-                } else {
-                    System.out.println("✗ Authentication failed for user: " + username + " (wrong password)");
+                    return new UserAccount(userId, username, storedPassword, role, zonedCreatedAt);
                 }
-            } else {
-                System.out.println("✗ Authentication failed for user: " + username + " (user not found)");
             }
 
         } catch (SQLException e) {
-            System.err.println("Authentication database error: " + e.getMessage());
+            System.err.println("Authentication error: " + e.getMessage());
             e.printStackTrace();
-
-            // Provide more specific error messages
-            if (e.getMessage().contains("authentication failed") || e.getMessage().contains("password authentication failed")) {
-                throw new RuntimeException("Database authentication failed. Please check your database credentials.");
-            } else if (e.getMessage().contains("Connection") || e.getMessage().contains("connect")) {
-                throw new RuntimeException("Cannot connect to database. Please check your network connection and database settings.");
-            } else {
-                throw new RuntimeException("Database error during authentication: " + e.getMessage());
-            }
         }
 
-        return null; // Authentication failed
+        return null;
     }
 
     /**
-     * Creates a new user account
-     * @param username the username
-     * @param password the plain text password
-     * @param role the user role
-     * @return true if account created successfully, false otherwise
+     * Create new user account
      */
     public boolean createAccount(String username, String password, Role role) {
-        // Check if database is available
-        if (!DBUtil.isDatabaseAvailable()) {
-            throw new RuntimeException("Database is not available. Please check your database connection and try again.");
-        }
-
         // Check if username already exists
         if (usernameExists(username)) {
-            System.out.println("✗ Account creation failed: Username '" + username + "' already exists");
             return false;
         }
 
-        String sql = "INSERT INTO user_account (user_id, username, password, role) VALUES (?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO user_account (user_id, username, password, role, created_at) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
 
             UUID userId = UUID.randomUUID();
-            String hashedPassword = PasswordUtil.hashPassword(password);
+            Timestamp now = Timestamp.from(java.time.Instant.now());
 
-            stmt.setObject(1, userId);
+            stmt.setObject(1, userId, java.sql.Types.OTHER);
             stmt.setString(2, username);
-            stmt.setString(3, hashedPassword);
+            stmt.setString(3, password); // In production, hash the password
             stmt.setString(4, role.toString());
+            stmt.setTimestamp(5, now);
 
             int rowsAffected = stmt.executeUpdate();
 
-            if (rowsAffected > 0) {
-                System.out.println("✓ Account created successfully for user: " + username + " with role: " + role);
+            // If user is LANSIA, also create entry in lansia table
+            if (rowsAffected > 0 && role == Role.LANSIA) {
+                createLansiaEntry(conn, userId);
+            }
 
-                // Create additional profile based on role
-                createUserProfile(userId, role);
-                return true;
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Account creation error: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Create entry in lansia table for lansia users
+     */
+    private void createLansiaEntry(Connection conn, UUID userId) {
+        String insertLansiaQuery = "INSERT INTO lansia (user_id, created_at) VALUES (?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(insertLansiaQuery)) {
+            stmt.setObject(1, userId, java.sql.Types.OTHER);
+            stmt.setTimestamp(2, Timestamp.from(java.time.Instant.now()));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Failed to create lansia entry: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Verify password for a user
+     */
+    public boolean verifyPassword(String username, String password) {
+        String query = "SELECT password FROM user_account WHERE username = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String storedPassword = rs.getString("password");
+                return password.equals(storedPassword); // In production, use proper password verification
             }
 
         } catch (SQLException e) {
-            System.err.println("Account creation database error: " + e.getMessage());
+            System.err.println("Password verification error: " + e.getMessage());
             e.printStackTrace();
-
-            // Check for specific database errors
-            if (e.getMessage().contains("duplicate key") || e.getMessage().contains("unique constraint")) {
-                throw new RuntimeException("Username already exists. Please choose a different username.");
-            } else if (e.getMessage().contains("Connection") || e.getMessage().contains("connect")) {
-                throw new RuntimeException("Cannot connect to database. Please check your network connection and database settings.");
-            } else {
-                throw new RuntimeException("Database error during account creation: " + e.getMessage());
-            }
         }
 
         return false;
     }
 
     /**
-     * Checks if a username already exists
-     * @param username the username to check
-     * @return true if username exists, false otherwise
+     * Update user password
      */
-    private boolean usernameExists(String username) {
-        String sql = "SELECT COUNT(*) FROM user_account WHERE username = ?";
+    public boolean updatePassword(String username, String newPassword) {
+        String updateQuery = "UPDATE user_account SET password = ? WHERE username = ?";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setString(1, newPassword); // In production, hash the password
+            stmt.setString(2, username);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Password update error: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Check if username already exists
+     */
+    private boolean usernameExists(String username) {
+        String query = "SELECT COUNT(*) FROM user_account WHERE username = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
@@ -144,183 +164,96 @@ public class AuthService {
             }
 
         } catch (SQLException e) {
-            System.err.println("Failed to check username: " + e.getMessage());
+            System.err.println("Username check error: " + e.getMessage());
             e.printStackTrace();
-            // If we can't check, assume it doesn't exist and let the insert fail if it does
-            return false;
         }
 
         return false;
     }
 
     /**
-     * Creates additional user profile based on role
-     * @param userId the user ID
-     * @param role the user role
-     */
-    private void createUserProfile(UUID userId, Role role) {
-        try (Connection conn = DBUtil.getConnection()) {
-
-            switch (role) {
-                case LANSIA:
-                    createLansiaProfile(conn, userId);
-                    System.out.println("✓ Lansia profile created for user ID: " + userId);
-                    break;
-                case FAMILY:
-                    createFamilyProfile(conn, userId);
-                    System.out.println("✓ Family profile created for user ID: " + userId);
-                    break;
-                case MEDICAL_STAFF:
-                    createMedicalStaffProfile(conn, userId);
-                    System.out.println("✓ Medical staff profile created for user ID: " + userId);
-                    break;
-                case ADMIN:
-                default:
-                    System.out.println("✓ No additional profile needed for role: " + role);
-                    break;
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Warning: Failed to create user profile for role " + role + ": " + e.getMessage());
-            e.printStackTrace();
-            // Don't throw exception here as the main account was already created
-        }
-    }
-
-    /**
-     * Creates a lansia profile
-     * @param conn the database connection
-     * @param userId the user ID
-     */
-    private void createLansiaProfile(Connection conn, UUID userId) throws SQLException {
-        String sql = "INSERT INTO lansia (user_id) VALUES (?)";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, userId);
-            stmt.executeUpdate();
-        }
-    }
-
-    /**
-     * Creates a family member profile
-     * @param conn the database connection
-     * @param userId the user ID
-     */
-    private void createFamilyProfile(Connection conn, UUID userId) throws SQLException {
-        String sql = "INSERT INTO family_member (user_id) VALUES (?)";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, userId);
-            stmt.executeUpdate();
-        }
-    }
-
-    /**
-     * Creates a medical staff profile
-     * @param conn the database connection
-     * @param userId the user ID
-     */
-    private void createMedicalStaffProfile(Connection conn, UUID userId) throws SQLException {
-        String sql = "INSERT INTO medical_staff (user_id) VALUES (?)";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, userId);
-            stmt.executeUpdate();
-        }
-    }
-
-    /**
-     * Changes user password
-     * @param userId the user ID
-     * @param oldPassword the current password
-     * @param newPassword the new password
-     * @return true if password changed successfully, false otherwise
-     */
-    public boolean changePassword(UUID userId, String oldPassword, String newPassword) {
-        if (!DBUtil.isDatabaseAvailable()) {
-            throw new RuntimeException("Database is not available. Please check your database connection and try again.");
-        }
-
-        // First verify the old password
-        String selectSql = "SELECT password FROM user_account WHERE user_id = ?";
-        String updateSql = "UPDATE user_account SET password = ? WHERE user_id = ?";
-
-        try (Connection conn = DBUtil.getConnection()) {
-
-            // Verify old password
-            try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
-                selectStmt.setObject(1, userId);
-                ResultSet rs = selectStmt.executeQuery();
-
-                if (rs.next()) {
-                    String storedPassword = rs.getString("password");
-
-                    if (!PasswordUtil.verifyPassword(oldPassword, storedPassword)) {
-                        System.out.println("✗ Password change failed: Old password doesn't match");
-                        return false; // Old password doesn't match
-                    }
-                } else {
-                    System.out.println("✗ Password change failed: User not found");
-                    return false; // User not found
-                }
-            }
-
-            // Update password
-            try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-                String hashedNewPassword = PasswordUtil.hashPassword(newPassword);
-                updateStmt.setString(1, hashedNewPassword);
-                updateStmt.setObject(2, userId);
-
-                int rowsAffected = updateStmt.executeUpdate();
-                if (rowsAffected > 0) {
-                    System.out.println("✓ Password changed successfully for user ID: " + userId);
-                    return true;
-                }
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Failed to change password: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Database error during password change: " + e.getMessage());
-        }
-
-        return false;
-    }
-
-    /**
-     * Gets user account by ID
-     * @param userId the user ID
-     * @return UserAccount object if found, null otherwise
+     * Get user by ID
      */
     public UserAccount getUserById(UUID userId) {
-        if (!DBUtil.isDatabaseAvailable()) {
-            throw new RuntimeException("Database is not available. Please check your database connection and try again.");
-        }
-
-        String sql = "SELECT user_id, username, password, role, created_at FROM user_account WHERE user_id = ?";
+        String query = "SELECT user_id, username, password, role, created_at FROM user_account WHERE user_id = ?";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setObject(1, userId);
+            stmt.setString(1, userId.toString());
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 String username = rs.getString("username");
                 String password = rs.getString("password");
-                String roleString = rs.getString("role");
-                Role role = Role.valueOf(roleString.toUpperCase());
+                Role role = Role.valueOf(rs.getString("role"));
                 Timestamp createdAt = rs.getTimestamp("created_at");
+                ZonedDateTime zonedCreatedAt = createdAt.toInstant().atZone(java.time.ZoneId.systemDefault());
 
-                return new UserAccount(userId, username, password, role, createdAt);
+                return new UserAccount(userId, username, password, role, zonedCreatedAt);
             }
 
         } catch (SQLException e) {
-            System.err.println("Failed to get user: " + e.getMessage());
+            System.err.println("Get user error: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Database error during user retrieval: " + e.getMessage());
         }
 
         return null;
+    }
+
+    /**
+     * Update user profile
+     */
+    public boolean updateProfile(UUID userId, String newUsername) {
+        // Check if new username already exists (excluding current user)
+        if (usernameExistsExcludingUser(newUsername, userId)) {
+            return false;
+        }
+
+        String updateQuery = "UPDATE user_account SET username = ? WHERE user_id = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setString(1, newUsername);
+            stmt.setString(2, userId.toString());
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Profile update error: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Check if username exists excluding a specific user
+     */
+    private boolean usernameExistsExcludingUser(String username, UUID excludeUserId) {
+        String query = "SELECT COUNT(*) FROM user_account WHERE username = ? AND user_id != ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, excludeUserId.toString());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Username check error: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+    public void logout() {
+        SessionManager.clearSession();
+        System.out.println("User logged out successfully");
     }
 }

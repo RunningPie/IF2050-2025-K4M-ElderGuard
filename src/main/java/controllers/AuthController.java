@@ -6,10 +6,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import model.UserAccount;
-import model.Role;
+import models.UserAccount;
+import models.Role;
 import service.AuthService;
 import utils.SessionManager;
+import security.AccessControlManager;
 
 import java.io.IOException;
 
@@ -43,7 +44,7 @@ public class AuthController {
     private void initialize() {
         // Initialize role combo box if it exists (for signup)
         if (roleComboBox != null) {
-            roleComboBox.getItems().addAll(Role.values());
+            roleComboBox.getItems().addAll(Role.LANSIA, Role.FAMILY, Role.MEDICAL_STAFF);
             roleComboBox.setValue(Role.LANSIA); // Default value
         }
 
@@ -73,7 +74,9 @@ public class AuthController {
 
         try {
             // Disable login button to prevent multiple clicks
-            loginButton.setDisable(true);
+            if (loginButton != null) {
+                loginButton.setDisable(true);
+            }
 
             // Attempt authentication
             UserAccount user = authService.authenticate(username, password);
@@ -82,8 +85,8 @@ public class AuthController {
                 // Store user session
                 SessionManager.setCurrentUser(user);
 
-                // Navigate to appropriate dashboard based on role
-                navigateToDashboard(user.getUserRole());
+                // Navigate to appropriate page based on role
+                navigateAfterLogin(user.getUserRole());
 
             } else {
                 showError("Invalid username or password!");
@@ -93,7 +96,9 @@ public class AuthController {
             showError("Login failed: " + e.getMessage());
             e.printStackTrace();
         } finally {
-            loginButton.setDisable(false);
+            if (loginButton != null) {
+                loginButton.setDisable(false);
+            }
         }
     }
 
@@ -104,9 +109,11 @@ public class AuthController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignUpView.fxml"));
             Parent root = loader.load();
 
-            Stage stage = (Stage) loginButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("ElderGuard - Sign Up");
+            Stage stage = getCurrentStage();
+            if (stage != null) {
+                stage.setScene(new Scene(root));
+                stage.setTitle("ElderGuard - Sign Up");
+            }
 
         } catch (IOException e) {
             showError("Failed to load sign up page: " + e.getMessage());
@@ -145,7 +152,9 @@ public class AuthController {
 
         try {
             // Disable signup button to prevent multiple clicks
-            signUpButton.setDisable(true);
+            if (signUpButton != null) {
+                signUpButton.setDisable(true);
+            }
 
             // Create new user account
             boolean success = authService.createAccount(username, password, role);
@@ -164,7 +173,9 @@ public class AuthController {
             showError("Sign up failed: " + e.getMessage());
             e.printStackTrace();
         } finally {
-            signUpButton.setDisable(false);
+            if (signUpButton != null) {
+                signUpButton.setDisable(false);
+            }
         }
     }
 
@@ -174,11 +185,11 @@ public class AuthController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LoginView.fxml"));
             Parent root = loader.load();
 
-            Stage stage = (Stage) ((usernameField != null) ? usernameField : signUpButton).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("ElderGuard - Login");
-            stage.getScene().getRoot().requestLayout();
-
+            Stage stage = getCurrentStage();
+            if (stage != null) {
+                stage.setScene(new Scene(root));
+                stage.setTitle("ElderGuard - Login");
+            }
 
         } catch (IOException e) {
             showError("Failed to load login page: " + e.getMessage());
@@ -186,37 +197,52 @@ public class AuthController {
         }
     }
 
-    private void navigateToDashboard(Role role) {
+    private void navigateAfterLogin(Role role) {
         try {
-            String fxmlPath = getDashboardPath(role);
+            String fxmlPath = AccessControlManager.getDefaultPageAfterLogin(role);
+            String title = getPageTitle(role);
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
-            Stage stage = (Stage) loginButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("ElderGuard - " + role + " Dashboard");
-            stage.getScene().getRoot().requestLayout();
-
+            Stage stage = getCurrentStage();
+            if (stage != null) {
+                stage.setScene(new Scene(root));
+                stage.setTitle("ElderGuard - " + title);
+            }
 
         } catch (IOException e) {
-            showError("Failed to load dashboard: " + e.getMessage());
+            showError("Failed to load page: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private String getDashboardPath(Role role) {
+    private String getPageTitle(Role role) {
         switch (role) {
-            case ADMIN:
-                return "/view/AdminDashboard.fxml";
-            case LANSIA:
-                return "/view/LansiaDashboard.fxml";
             case FAMILY:
-                return "/view/FamilyDashboard.fxml";
+                return "Family Dashboard";
+            case LANSIA:
+                return "Lansia Dashboard";
             case MEDICAL_STAFF:
-                return "/view/MedicalDashboard.fxml";
+                return "Emergency Alerts";
+            case ADMIN:
+                return "Admin Dashboard";
             default:
-                return "/view/LoginView.fxml";
+                return "Dashboard";
         }
+    }
+
+    private Stage getCurrentStage() {
+        if (loginButton != null && loginButton.getScene() != null) {
+            return (Stage) loginButton.getScene().getWindow();
+        }
+        if (usernameField != null && usernameField.getScene() != null) {
+            return (Stage) usernameField.getScene().getWindow();
+        }
+        if (signUpButton != null && signUpButton.getScene() != null) {
+            return (Stage) signUpButton.getScene().getWindow();
+        }
+        return null;
     }
 
     private void showError(String message) {
@@ -230,13 +256,6 @@ public class AuthController {
         if (errorLabel != null) {
             errorLabel.setText(message);
             errorLabel.setStyle("-fx-text-fill: #27ae60;");
-        }
-    }
-
-    private void showInfo(String message) {
-        if (errorLabel != null) {
-            errorLabel.setText(message);
-            errorLabel.setStyle("-fx-text-fill: #3498db;");
         }
     }
 
