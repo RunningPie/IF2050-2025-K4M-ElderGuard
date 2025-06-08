@@ -12,8 +12,8 @@ import models.UserAccount;
 import models.UserProfile;
 import models.Role;
 import utils.SessionManager;
-import service.AuthService;
-import service.UserProfileService;
+import services.AuthService;
+import services.UserProfileService;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
