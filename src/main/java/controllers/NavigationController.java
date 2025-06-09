@@ -23,6 +23,9 @@ public class NavigationController {
     private VBox navigationMenu;
 
     @FXML
+    private Button medicalHistoryButton;
+
+    @FXML
     private Label welcomeLabel;
 
     @FXML
@@ -77,6 +80,7 @@ public class NavigationController {
         if (dashboardButton != null) dashboardButton.setVisible(false);
         if (emergencyAlertsButton != null) emergencyAlertsButton.setVisible(false);
         if (accountButton != null) accountButton.setVisible(false);
+        if (medicalHistoryButton != null) medicalHistoryButton.setVisible(false);  // hide all first
 
         // Show buttons based on role requirements
         switch (role) {
@@ -106,7 +110,12 @@ public class NavigationController {
                     accountButton.setVisible(true);
                     accountButton.setText("Account");
                 }
+                if (medicalHistoryButton != null) {
+                    medicalHistoryButton.setVisible(true);
+                    medicalHistoryButton.setText("Medical History");
+                }
                 break;
+
 
             case MEDICAL_STAFF:
                 // MEDICAL_STAFF: Emergency Alert, Account
@@ -208,6 +217,22 @@ public class NavigationController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void handleMedicalHistory() {
+        UserAccount currentUser = SessionManager.getCurrentUser();
+        if (currentUser == null) {
+            showAccessDeniedAlert("Medical History");
+            return;
+        }
+        Role role = currentUser.getUserRole();
+        if (role != Role.LANSIA) {
+            showAccessDeniedAlert("Medical History");
+            return;
+        }
+        navigateToView("/view/HistoryView.fxml", "Medical History");
+    }
+
 
     private Stage getCurrentStage() {
         if (logoutButton != null && logoutButton.getScene() != null) {

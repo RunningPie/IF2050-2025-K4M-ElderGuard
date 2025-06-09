@@ -14,48 +14,76 @@ public class HistoryController {
     @FXML
     private TableView<LansiaMedicalHistory> historyTable;
 
+    // Sesuaikan nama dengan fx:id di FXML
     @FXML
-    private TableColumn<LansiaMedicalHistory, String> conditionColumn;
+    private TableColumn<LansiaMedicalHistory, String> columnCondition;
 
     @FXML
-    private TableColumn<LansiaMedicalHistory, Timestamp> dateColumn;
+    private TableColumn<LansiaMedicalHistory, Timestamp> columnDiagnosisDate;
 
     @FXML
-    private TableColumn<LansiaMedicalHistory, String> severityColumn;
+    private TableColumn<LansiaMedicalHistory, String> columnSeverity;
 
     @FXML
-    private TableColumn<LansiaMedicalHistory, String> descriptionColumn;
+    private TableColumn<LansiaMedicalHistory, String> columnDescription;
 
-    @FXML
-    private ComboBox<LansiaMedicalHistory.Severity> severityCombo;
+    // Comment field yang tidak ada di FXML
+    // @FXML
+    // private ComboBox<LansiaMedicalHistory.Severity> severityCombo;
 
-    @FXML
-    private TextField conditionInput;
+    // @FXML
+    // private TextField conditionInput;
 
-    @FXML
-    private TextArea descriptionInput;
+    // @FXML
+    // private TextArea descriptionInput;
 
     private ObservableList<LansiaMedicalHistory> observableHistoryList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        // Inisialisasi ComboBox Severity
-        severityCombo.setItems(FXCollections.observableArrayList(LansiaMedicalHistory.Severity.values()));
+        // Comment inisialisasi ComboBox yang tidak ada
+        // severityCombo.setItems(FXCollections.observableArrayList(LansiaMedicalHistory.Severity.values()));
 
-        // Inisialisasi Table Columns
-        conditionColumn.setCellValueFactory(new PropertyValueFactory<>("medicalCondition"));
-        dateColumn.setCellValueFactory(new PropertyValueFactory<>("diagnosisDate"));
-        severityColumn.setCellValueFactory(cellData ->
+        // Inisialisasi Table Columns dengan nama yang benar
+        columnCondition.setCellValueFactory(new PropertyValueFactory<>("medicalCondition"));
+        columnDiagnosisDate.setCellValueFactory(new PropertyValueFactory<>("diagnosisDate"));
+        columnSeverity.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSeverity().name())
         );
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        columnDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         // Inisialisasi TableView
         historyTable.setItems(observableHistoryList);
 
-        // Optionally, load existing data here (from DB)
+        // Load sample data untuk testing
+        loadSampleData();
     }
 
+    // Method untuk testing - tambah sample data
+    private void loadSampleData() {
+        LansiaMedicalHistory sample1 = new LansiaMedicalHistory(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Diabetes",
+                new Timestamp(System.currentTimeMillis()),
+                "Type 2 diabetes mellitus",
+                LansiaMedicalHistory.Severity.MEDIUM
+        );
+
+        LansiaMedicalHistory sample2 = new LansiaMedicalHistory(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Hypertension",
+                new Timestamp(System.currentTimeMillis() - 86400000), // 1 day ago
+                "High blood pressure condition",
+                LansiaMedicalHistory.Severity.HIGH
+        );
+
+        observableHistoryList.addAll(sample1, sample2);
+    }
+
+    // Comment method yang menggunakan field yang tidak ada
+    /*
     @FXML
     private void addHistoryEntry() {
         String condition = conditionInput.getText();
@@ -67,20 +95,16 @@ public class HistoryController {
             return;
         }
 
-        // Buat entry baru
         LansiaMedicalHistory newEntry = new LansiaMedicalHistory(
-                UUID.randomUUID(),         // historyId → akan di DB, sementara pakai random
-                UUID.randomUUID(),         // userId → sementara pakai random, sesuaikan kalau ada user login
+                UUID.randomUUID(),
+                UUID.randomUUID(),
                 condition,
                 new Timestamp(System.currentTimeMillis()),
                 description,
                 severity
         );
 
-        // Masukkan ke list
         observableHistoryList.add(newEntry);
-
-        // Reset input fields
         clearInputFields();
     }
 
@@ -89,6 +113,7 @@ public class HistoryController {
         descriptionInput.clear();
         severityCombo.getSelectionModel().clearSelection();
     }
+    */
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);

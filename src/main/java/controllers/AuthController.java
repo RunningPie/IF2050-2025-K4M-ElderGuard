@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import models.UserAccount;
 import models.Role;
-import service.AuthService;
+import services.AuthService;
 import utils.SessionManager;
 import security.AccessControlManager;
 

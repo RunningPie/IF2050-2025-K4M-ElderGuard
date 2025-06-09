@@ -12,7 +12,10 @@
 
     <!-- Sidebar -->
     <left>
-        <VBox spacing="20" style="-fx-background-color: #0d3b66;" prefWidth="220" alignment="TOP_CENTER" padding="20">
+        <VBox spacing="20" style="-fx-background-color: #0d3b66;" prefWidth="220" alignment="TOP_CENTER">
+            <padding>
+                <Insets topRightBottomLeft="20"/>
+            </padding>
             <Label text="Elderguard" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
 
             <Button text="Dashboard" prefWidth="180" style="-fx-background-color: #ffffff22; -fx-text-fill: white;" />
@@ -24,7 +27,10 @@
 
     <!-- Main content -->
     <center>
-        <VBox spacing="15" padding="20">
+        <VBox spacing="15">
+            <padding>
+                <Insets topRightBottomLeft="20"/>
+            </padding>
             <!-- Title -->
             <Label text="Medical History" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
@@ -37,6 +43,28 @@
                     <TableColumn fx:id="columnSeverity" text="Severity" prefWidth="100"/>
                 </columns>
             </TableView>
+
+            <!-- Input Form -->
+            <VBox spacing="10" style="-fx-border-color: #cccccc; -fx-border-radius: 5; -fx-padding: 15;">
+                <Label text="Add New Medical History" style="-fx-font-weight: bold;"/>
+
+                <HBox spacing="10">
+                    <VBox spacing="5">
+                        <Label text="Condition:"/>
+                        <TextField fx:id="conditionInput" prefWidth="200"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Severity:"/>
+                        <ComboBox fx:id="severityCombo" prefWidth="150"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="5">
+                    <Label text="Description:"/>
+                    <TextArea fx:id="descriptionInput" prefRowCount="3"/>
+                </VBox>
+            </VBox>
 
             <!-- Action buttons -->
             <HBox spacing="10">

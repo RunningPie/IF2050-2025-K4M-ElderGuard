@@ -3,7 +3,6 @@ package services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.LansiaMedicalHistory;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
