@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.HistoryController">
+
+    <!-- Sidebar -->
+    <left>
+        <VBox spacing="20" style="-fx-background-color: #0d3b66;" prefWidth="220" alignment="TOP_CENTER" padding="20">
+            <Label text="Elderguard" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+            <Button text="Dashboard" prefWidth="180" style="-fx-background-color: #ffffff22; -fx-text-fill: white;" />
+            <Button text="Accounts" prefWidth="180" style="-fx-background-color: #ffffff22; -fx-text-fill: white;" />
+            <Button text="Settings" prefWidth="180" style="-fx-background-color: #ffffff22; -fx-text-fill: white;" />
+            <Button text="Medical History" prefWidth="180" style="-fx-background-color: #ffffff55; -fx-text-fill: white; -fx-font-weight: bold;" />
+        </VBox>
+    </left>
+
+    <!-- Main content -->
+    <center>
+        <VBox spacing="15" padding="20">
+            <!-- Title -->
+            <Label text="Medical History" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+            <!-- TableView -->
+            <TableView fx:id="historyTable" prefHeight="400">
+                <columns>
+                    <TableColumn fx:id="columnCondition" text="Condition" prefWidth="150"/>
+                    <TableColumn fx:id="columnDiagnosisDate" text="Diagnosis Date" prefWidth="150"/>
+                    <TableColumn fx:id="columnDescription" text="Description" prefWidth="200"/>
+                    <TableColumn fx:id="columnSeverity" text="Severity" prefWidth="100"/>
+                </columns>
+            </TableView>
+
+            <!-- Action buttons -->
+            <HBox spacing="10">
+                <Button text="Add History" fx:id="addButton" style="-fx-background-color: #28a745; -fx-text-fill: white;" />
+                <Button text="Edit Selected" fx:id="editButton" style="-fx-background-color: #ffc107; -fx-text-fill: black;" />
+                <Button text="Delete Selected" fx:id="deleteButton" style="-fx-background-color: #dc3545; -fx-text-fill: white;" />
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>
