@@ -1,13 +1,14 @@
 package models;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class EmergencyAlert {
     private String alertId;
     private String priority;
     private String patientName;
     private String alertType;
-    private String patientId;
+    private UUID patientId;
     private String location;
     private LocalDateTime createdAt;
     private String status;
@@ -15,7 +16,7 @@ public class EmergencyAlert {
 
     // Constructor with assignedTo
     public EmergencyAlert(String alertId, String priority, String patientName, String alertType,
-                          String patientId, String location, LocalDateTime createdAt, String status, String assignedTo) {
+                          UUID patientId, String location, LocalDateTime createdAt, String status, String assignedTo) {
         this.alertId = alertId;
         this.priority = priority;
         this.patientName = patientName;
@@ -40,8 +41,8 @@ public class EmergencyAlert {
     public String getAlertType() { return alertType; }
     public void setAlertType(String alertType) { this.alertType = alertType; }
 
-    public String getPatientId() { return patientId; }
-    public void setPatientId(String patientId) { this.patientId = patientId; }
+    public UUID getPatientId() { return patientId; }
+    public void setPatientId(UUID patientId) { this.patientId = patientId; }
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }

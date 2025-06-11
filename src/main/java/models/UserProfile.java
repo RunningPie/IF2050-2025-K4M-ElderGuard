@@ -87,15 +87,15 @@ public class UserProfile {
 
     // Utility methods
     public String getPhone() {
-        return service.UserProfileService.extractPhone(contactInfo);
+        return services.UserProfileService.extractPhone(contactInfo);
     }
 
     public String[] getLocation() {
-        return service.UserProfileService.parseLocation(contactInfo);
+        return services.UserProfileService.parseLocation(contactInfo);
     }
 
     public void setLocationAndPhone(String phone, String city, String state) {
-        this.contactInfo = service.UserProfileService.formatContactInfo(phone, city, state);
+        this.contactInfo = services.UserProfileService.formatContactInfo(phone, city, state);
     }
 
     @Override

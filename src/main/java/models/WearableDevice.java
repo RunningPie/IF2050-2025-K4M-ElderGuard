@@ -28,8 +28,8 @@ public class WearableDevice {
         this.deviceID = deviceID;
         this.model = model;
         this.batteryLevel = batteryLevel;
-        this.latitude = 0;
-        this.longitude = 0;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.lansiaID = lansiaID;
     }
 
