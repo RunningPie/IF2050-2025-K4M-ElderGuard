@@ -1,8 +1,5 @@
 package services;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
 import models.Sensor;
 import models.WearableDevice;
 import utils.AlertEventManager;
@@ -32,8 +29,7 @@ public class MonitoringService {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public void startMonitoring() {
-        device = new WearableDevice("WD-001", "ElderBand Alpha", 100.0f);
-
+        device = deviceService.getDeviceById(UUID.fromString("f3b2c8f2-58dc-45ef-bf3d-cdfbba43f65c"));
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 if (readingCount >= MAX_READINGS) {
@@ -91,7 +87,7 @@ public class MonitoringService {
         List<Sensor> updatedSensors = DataSimulator.generateDummySensorData();
         device.setSensors(updatedSensors);
 
-        UUID deviceId = deviceService.getDeviceIdByModel(device.getModel());
+        UUID deviceId = device.getDeviceId();
         if (deviceId == null) {
             System.err.println("No device found for model: " + device.getModel());
             return;
