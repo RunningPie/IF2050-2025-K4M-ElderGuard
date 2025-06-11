@@ -23,7 +23,7 @@ public class EmergencyAlertService {
                         rs.getString("priority"),
                         rs.getString("patient_name"),
                         rs.getString("alert_type"),
-                        rs.getString("patient_id"),
+                        (UUID) rs.getObject("patient_id"),
                         rs.getString("location"),
                         rs.getTimestamp("created_at").toLocalDateTime(),
                         rs.getString("status"),
@@ -52,7 +52,7 @@ public class EmergencyAlertService {
             stmt.setString(2, alert.getPriority());
             stmt.setString(3, alert.getPatientName());
             stmt.setString(4, alert.getAlertType());
-            stmt.setString(5, alert.getPatientId());
+            stmt.setObject(5, alert.getPatientId(), java.sql.Types.OTHER);
             stmt.setString(6, alert.getLocation());
             stmt.setTimestamp(7, Timestamp.valueOf(alert.getCreatedAt()));
             stmt.setString(8, alert.getStatus());

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DeviceService {
+public class WearableDeviceService {
 
     // CREATE
     public boolean addDevice(WearableDevice device) {
@@ -60,6 +60,39 @@ public class DeviceService {
             System.err.println("Error fetching device by ID: " + e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * Retrieve all wearable devices from the database
+     */
+    public List<WearableDevice> getAllDevices() {
+        List<WearableDevice> devices = new ArrayList<>();
+        String sql = "SELECT * FROM wearable_device";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                WearableDevice device = new WearableDevice(
+                        rs.getObject("device_id", UUID.class),
+                        rs.getString("model"),
+                        rs.getFloat("battery_level"),
+                        rs.getFloat("latitude"),
+                        rs.getFloat("longitude"),
+                        rs.getObject("lansia_id", UUID.class),
+                        new ArrayList<>(), // Skip loading sensors for now
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                );
+                devices.add(device);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching devices: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return devices;
     }
 
     // UPDATE
