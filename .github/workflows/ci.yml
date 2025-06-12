@@ -51,14 +51,12 @@ jobs:
 
       # Step 7: Builds a "fat JAR" that includes all dependencies
       - name: Build fat JAR
-        if: github.ref == 'refs/heads/main'
         run: ./gradlew shadowJar
 
       # Step 8: Creates launcher scripts and .env file with embedded secrets.
       # This provides two ways for the app to get the DB URL: env variable or .env file.
       # WARNING: This embeds secrets directly into the scripts. This is insecure and not recommended for public distribution.
       - name: Create launcher scripts and .env file
-        if: github.ref == 'refs/heads/main'
         run: |
           # --- Create .env file ---
           # This file acts as a fallback if the system environment variable is not read.
@@ -110,7 +108,6 @@ jobs:
       # Step 9: Uploads the generated package as a build artifact
       # This package includes the JAR, launcher scripts, and the .env file.
       - name: Upload artifact package
-        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           # The name of the artifact to be uploaded
