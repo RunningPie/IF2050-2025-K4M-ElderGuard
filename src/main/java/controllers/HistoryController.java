@@ -260,8 +260,4 @@ public class HistoryController extends NavigationController {
         alert.showAndWait();
     }
 
-    // Add missing navigation method if not in parent class
-    @FXML
-    private void handleEmergencyAlerts() {
-    }
 }
