@@ -8,9 +8,6 @@ import utils.SessionManager;
 import java.sql.*;
 import java.time.ZonedDateTime;
 import java.util.UUID;
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class AuthService {
 
@@ -259,35 +256,4 @@ public class AuthService {
         SessionManager.clearSession();
         System.out.println("User logged out successfully");
     }
-
-    /**
-     * Get all users from the database
-     */
-    public List<UserAccount> getAllUsers() {
-        List<UserAccount> users = new ArrayList<>();
-        String query = "SELECT user_id, username, password, role, created_at FROM user_account";
-
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                UUID userId = UUID.fromString(rs.getString("user_id"));
-                String username = rs.getString("username");
-                String password = rs.getString("password");
-                Role role = Role.valueOf(rs.getString("role"));
-                Timestamp createdAt = rs.getTimestamp("created_at");
-                ZonedDateTime zonedCreatedAt = createdAt.toInstant().atZone(java.time.ZoneId.systemDefault());
-
-                users.add(new UserAccount(userId, username, password, role, zonedCreatedAt));
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Error fetching users: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return users;
-    }
-
 }
