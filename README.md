@@ -16,7 +16,7 @@
 <div align="justify">
 
 
-Sistem ini berfungsi sebagai solusi pemantauan kesehatan dan deteksi keadaan darurat, dengan kemampuan untuk mengidentifikasi aktivitas pengguna secara real-time seperti mendeteksi kondisi abnormal, jatuh, dan detak jantung tidak normal. Menggunakan perangkat wearable yang dilengkapi dengan berbagai sensor (detak jantung, suhu tubuh, tekanan darah, akselerometer, dan GPS), sistem mengumpulkan data secara kontinu dan mengirimkannya ke cloud database melalui koneksi internet.
+Sistem ini berfungsi sebagai solusi pemantauan kesehatan dan deteksi keadaan darurat, dengan kemampuan untuk mengidentifikasi aktivitas pengguna secara real-time seperti mendeteksi kondisi abnormal, jatuh, dan detak jantung tidak normal. Menggunakan perangkat wearable yang dilengkapi dengan berbagai sensor (detak jantung, suhu tubuh, tekanan darah, akselerometer, dan GPS), sistem mengumpulkan data secara kontinu dan mengirimkannya ke cloud database melalui koneksi internet sehingga terintegrasi dengan keluarga dan pihak rumah sakit.
 </div>
 
 
@@ -49,7 +49,7 @@ SDK : Java SDK 21 dan yang lebih baru
 IDE : IntelliJ IDE versi tahun 2024 dan 2025  
 Build automation tool : Gradle v8.14  
 GUI Framework : JavaFX v17.0.2  
-Java DB Connection : Postgresql v42.7.1  
+Java DB Connection Library : Java PostgreSQL Library v42.7.1  
 Cloud DB Service : Supabase  
 
 
@@ -90,7 +90,7 @@ Berikut modul beserta dengan pembagian tugas yang diimplementasikan pada proyek 
 | UserAccount & Auth |    Dama Dhananjaya D.       |
 | Pemantauan Kondisi Tubuh Lansia (Monitoring) |   Dama Dhananjaya D.          |
 | Implementasi Riwayat Medis Lansia |    Dama Dhananjaya D., Daffari Adiyatma        |
-| Implementasi Notifikasi Darurat |   Dama Dhananjaya D., Nasha Nasmia, Vincentius Vercellino T.         |
+| Implementasi Notifikasi Darurat |   Dama Dhananjaya D., Nasha Nasmia, Zachrin Afian, Vincentius Vercellino T.         |
 | Unit Testing |   Nasha Nasmia, Zachrin Afian, Vincentius Vercellino T.|
 
 
