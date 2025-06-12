@@ -10,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import models.UserAccount;
 import models.UserProfile;
+import models.LansiaMedicalHistory;
 import models.Role;
 import utils.SessionManager;
 import services.AuthService;
@@ -118,7 +119,7 @@ public class AccountController extends NavigationController{
                 break;
 
             case LANSIA:
-                // LANSIA: Dashboard, Account
+                // LANSIA: Dashboard, Medical History, Account
                 showNavigationButton(dashboardButton, dashboardButtonCollapsed, "Dashboard", "D");
                 showNavigationButton(accountButton, accountButtonCollapsed, "Account", "A");
                 break;

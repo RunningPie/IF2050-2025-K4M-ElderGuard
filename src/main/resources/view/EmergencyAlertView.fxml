@@ -117,11 +117,7 @@
                 <Separator style="-fx-background-color: #e9ecef;" />
                 <Label fx:id="roleInfoContent" style="-fx-font-size: 14px; -fx-text-fill: #6c757d;" text="Loading..." wrapText="true" />
             </VBox>
-
         </VBox>
-
     </center>
-
-
 
 </BorderPane>
