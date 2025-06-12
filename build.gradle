@@ -49,6 +49,7 @@ javafx {
 // Configure the shadowJar task for JavaFX
 shadowJar {
     archiveBaseName = 'elderguard'
+    archiveVersion = '1.0'
     archiveClassifier = ''
     
     // Merge service files properly
@@ -61,15 +62,25 @@ shadowJar {
     manifest {
         attributes(
             'Main-Class': 'app.Launcher',
-            'Multi-Release': 'true'
+            'Multi-Release': 'true',
+            'JavaFX-Application-Class': 'app.Launcher'
         )
     }
     
     // Exclude signature files that can cause issues
     exclude 'META-INF/*.SF'
-    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.DSA'  
     exclude 'META-INF/*.RSA'
+    exclude 'module-info.class'
+    
+    // Don't create automatic module names that could conflict
+    exclude 'META-INF/MANIFEST.MF'
     
     // Ensure JavaFX modules are included
     configurations = [project.configurations.runtimeClasspath]
+    
+    // Prevent module issues by ensuring it runs in classpath mode
+    doLast {
+        println "Shadow JAR created: ${archiveFile.get().asFile}"
+    }
 }

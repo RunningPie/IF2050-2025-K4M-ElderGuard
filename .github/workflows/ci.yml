@@ -73,8 +73,8 @@ jobs:
           # Set the environment variable from the secret embedded at build time.
           export SUPABASE_DB_URL="jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
           echo "Starting the JavaFX application..."
-          # Run the Java application with JavaFX module path and add modules
-          java --module-path . --add-modules javafx.controls,javafx.fxml,java.desktop -jar "$JAR_FILE"
+          # Run the Java application in classpath mode to avoid module issues
+          java -Djava.awt.headless=false -Dprism.order=sw,es2,d3d -jar "$JAR_FILE"
           ' > build/libs/run.sh
           # Make the bash script executable
           chmod +x build/libs/run.sh
@@ -98,8 +98,8 @@ jobs:
           set "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
           echo.
           echo Starting the JavaFX application...
-          REM Run the Java application with JavaFX module path and add modules
-          java --module-path . --add-modules javafx.controls,javafx.fxml,java.desktop -jar "%JAR_FILE%"
+          REM Run the Java application in classpath mode to avoid module issues
+          java -Djava.awt.headless=false -Dprism.order=sw,es2,d3d -jar "%JAR_FILE%"
           ' > build/libs/run.bat
 
       # Step 9: Uploads the generated package as a build artifact
