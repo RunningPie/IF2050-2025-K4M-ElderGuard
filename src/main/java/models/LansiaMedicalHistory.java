@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 public class LansiaMedicalHistory {
-    private UUID historyId;  // PRIMARY KEY baru
+    private UUID historyId;
     private UUID userId;
     private String medicalCondition;
     private Timestamp diagnosisDate;
@@ -13,6 +13,11 @@ public class LansiaMedicalHistory {
 
     public enum Severity {
         LOW, MEDIUM, HIGH, CRITICAL
+    }
+
+    // Default constructor
+    public LansiaMedicalHistory() {
+        // Constructor kosong untuk inisialisasi objek
     }
 
     // Constructor for new medical history entry (no historyId yet)
