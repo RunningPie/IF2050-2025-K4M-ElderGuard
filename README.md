@@ -49,7 +49,7 @@ SDK : Java SDK 21 dan yang lebih baru
 IDE : IntelliJ IDE versi tahun 2024 dan 2025  
 Build automation tool : Gradle v8.14  
 GUI Framework : JavaFX v17.0.2  
-Java DB Connection : Postgresql v42.7.1  
+Java DB Connection Library : Java PostgreSQL Library v42.7.1  
 Cloud DB Service : Supabase  
 
 
