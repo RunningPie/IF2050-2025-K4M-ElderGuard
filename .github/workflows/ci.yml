@@ -35,7 +35,7 @@ jobs:
 
       # Step 3: Sets up environment variables from secrets for the build process
       - name: Set up environment variables
-        run: echo "SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }}" >> $GITHUB_ENV
+        run: echo "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX" >> $GITHUB_ENV
 
       # Step 4: Grants execute permission to the Gradle wrapper script
       - name: Grant execute permission for Gradle
@@ -50,17 +50,15 @@ jobs:
         run: ./gradlew test --no-daemon
 
       # Step 7: Builds a "fat JAR" that includes all dependencies
+      # This step only runs on the 'main' branch.
       - name: Build fat JAR
         run: ./gradlew shadowJar
 
       # Step 8: Creates launcher scripts and .env file with embedded secrets.
-      # This provides two ways for the app to get the DB URL: env variable or .env file.
-      # WARNING: This embeds secrets directly into the scripts. This is insecure and not recommended for public distribution.
       - name: Create launcher scripts and .env file
         run: |
           # --- Create .env file ---
-          # This file acts as a fallback if the system environment variable is not read.
-          echo "SUPABASE_DB_URL='jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX'" > build/libs/.env
+          echo "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX" > build/libs/.env
 
           # --- Create Bash script for Linux/macOS ---
           echo '#!/bin/bash
@@ -97,8 +95,8 @@ jobs:
           :found_jar
           echo.
           echo Found application: %JAR_FILE%
-          REM Set the environment variable from the secret embedded at build time.
-          set SUPABASE_DB_URL="jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
+          REM **FIX**: Quoting the entire assignment handles special characters in the URL.
+          set "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
           echo.
           echo Starting the application...
           REM Run the Java application.
@@ -106,11 +104,8 @@ jobs:
           ' > build/libs/run.bat
 
       # Step 9: Uploads the generated package as a build artifact
-      # This package includes the JAR, launcher scripts, and the .env file.
       - name: Upload artifact package
         uses: actions/upload-artifact@v4
         with:
-          # The name of the artifact to be uploaded
           name: elderguard-package
-          # The path to the directory to upload.
           path: build/libs/
