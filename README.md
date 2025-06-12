@@ -16,7 +16,7 @@
 <div align="justify">
 
 
-Sistem ini berfungsi sebagai solusi pemantauan kesehatan dan deteksi keadaan darurat, dengan kemampuan untuk mengidentifikasi aktivitas pengguna secara real-time seperti mendeteksi kondisi abnormal, jatuh, dan detak jantung tidak normal. Menggunakan perangkat wearable yang dilengkapi dengan berbagai sensor (detak jantung, suhu tubuh, tekanan darah, akselerometer, dan GPS), sistem mengumpulkan data secara kontinu dan mengirimkannya ke cloud database melalui koneksi internet.
+Sistem ini berfungsi sebagai solusi pemantauan kesehatan dan deteksi keadaan darurat, dengan kemampuan untuk mengidentifikasi aktivitas pengguna secara real-time seperti mendeteksi kondisi abnormal, jatuh, dan detak jantung tidak normal. Menggunakan perangkat wearable yang dilengkapi dengan berbagai sensor (detak jantung, suhu tubuh, tekanan darah, akselerometer, dan GPS), sistem mengumpulkan data secara kontinu dan mengirimkannya ke cloud database melalui koneksi internet sehingga terintegrasi dengan keluarga dan pihak rumah sakit.
 </div>
 
 
