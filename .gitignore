@@ -1,0 +1,38 @@
+# Gradle files
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Compiled Java class files
+*.class
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# JAR/WAR/EAR files
+*.jar
+*.war
+*.ear
+
+# Database configs
+*.db
+*.sqlite
+
+# Misc
+*.lock

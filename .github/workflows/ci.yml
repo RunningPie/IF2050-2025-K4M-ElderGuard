@@ -1,0 +1,111 @@
+# GitHub Actions workflow for a Java Gradle project
+# This workflow builds the project, runs tests, and creates a distributable package.
+name: ElderGuard CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events for the main and develop branches
+  push:
+    branches: [main, develop]
+  # Triggers the workflow on pull request events for the main and develop branches
+  pull_request:
+    branches: [main, develop]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Step 1: Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Sets up Java Development Kit (JDK) 21
+      - name: Set up JDK 21 with Gradle Cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          # Caches Gradle dependencies for faster subsequent builds
+          cache: 'gradle'
+
+      # Step 3: Sets up environment variables from secrets for the build process
+      - name: Set up environment variables
+        run: echo "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX" >> $GITHUB_ENV
+
+      # Step 4: Grants execute permission to the Gradle wrapper script
+      - name: Grant execute permission for Gradle
+        run: chmod +x gradlew
+
+      # Step 5: Builds the project using the Gradle wrapper
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon
+
+      # Step 6: Runs the tests using the Gradle wrapper
+      - name: Run tests
+        run: ./gradlew test --no-daemon
+
+      # Step 7: Builds a "fat JAR" that includes all dependencies
+      # This step only runs on the 'main' branch.
+      - name: Build fat JAR
+        run: ./gradlew shadowJar
+
+      # Step 8: Creates launcher scripts and .env file with embedded secrets.
+      - name: Create launcher scripts and .env file
+        run: |
+          # --- Create .env file ---
+          echo "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX" > build/libs/.env
+
+          # --- Create Bash script for Linux/macOS ---
+          echo '#!/bin/bash
+          # Script to run the ElderGuard application.
+          # Find the JAR file in the current directory.
+          JAR_FILE=$(find . -maxdepth 1 -name "*.jar" -print -quit)
+          if [ -z "$JAR_FILE" ]; then
+              echo "Error: No .jar file found in the current directory."
+              read -p "Press [Enter] to exit..."
+              exit 1
+          fi
+          echo "Found application: $JAR_FILE"
+          # Set the environment variable from the secret embedded at build time.
+          export SUPABASE_DB_URL="jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
+          echo "Starting the application..."
+          # Run the Java application.
+          java -jar "$JAR_FILE"
+          ' > build/libs/run.sh
+          # Make the bash script executable
+          chmod +x build/libs/run.sh
+
+          # --- Create Batch script for Windows ---
+          echo '@echo off
+          REM Script to run the ElderGuard application.
+          REM Find the JAR file in the current directory.
+          for %%f in (*.jar) do (
+              set JAR_FILE=%%f
+              goto found_jar
+          )
+          echo.
+          echo Error: No .jar file found in the current directory.
+          pause
+          exit /b 1
+          :found_jar
+          echo.
+          echo Found application: %JAR_FILE%
+          REM **FIX**: Quoting the entire assignment handles special characters in the URL.
+          set "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
+          echo.
+          echo Starting the application...
+          REM Run the Java application.
+          java -jar "%JAR_FILE%"
+          ' > build/libs/run.bat
+
+      # Step 9: Uploads the generated package as a build artifact
+      - name: Upload artifact package
+        uses: actions/upload-artifact@v4
+        with:
+          name: elderguard-package
+          path: build/libs/
