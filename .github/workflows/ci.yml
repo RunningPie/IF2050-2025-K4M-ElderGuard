@@ -1,45 +1,68 @@
+# GitHub Actions workflow for a Java Gradle project
+# This workflow builds the project, runs tests, and creates a distributable "fat JAR".
 name: ElderGuard CI
 
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push events for the main and develop branches
   push:
     branches: [main, develop]
+  # Triggers the workflow on pull request events for the main and develop branches
   pull_request:
     branches: [main, develop]
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # This workflow contains a single job called "build"
   build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v3
+      # Step 1: Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
+      # Step 2: Sets up Java Development Kit (JDK) 21
+      - name: Set up JDK 21 with Gradle Cache
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
+          # Caches Gradle dependencies for faster subsequent builds
+          cache: 'gradle'
 
+      # Step 3: Sets up environment variables from secrets
+      # This makes the secret available to subsequent steps in the job
       - name: Set up environment variables
-        run: |
-          echo "SUPABASE_DB_URL=$SUPABASE_DB_URL" >> $GITHUB_ENV
-        env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: echo "SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }}" >> $GITHUB_ENV
 
+      # Step 4: Grants execute permission to the Gradle wrapper script
+      # This is necessary for the script to be runnable in the Linux environment.
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
+      # Step 5: Builds the project using the Gradle wrapper
+      # The --no-daemon flag is recommended for CI environments.
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
 
-      # Optional: run tests
+      # Step 6: Runs the tests using the Gradle wrapper
       - name: Run tests
         run: ./gradlew test --no-daemon
 
+      # Step 7: Builds a "fat JAR" or "uber JAR" that includes all dependencies
+      # This uses the shadowJar plugin, as indicated by the task name.
       - name: Build fat JAR
         run: ./gradlew shadowJar
 
+      # Step 8: Uploads the generated JAR file as a build artifact
+      # This updated action (v4) is required.
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          # The name of the artifact to be uploaded
           name: elderguard-fat-jar
+          # The path to the file(s) to upload. The wildcard (*) captures the generated JAR.
           path: build/libs/*.jar
