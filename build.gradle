@@ -54,18 +54,14 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics' ]
 }
 
+// Configure the shadowJar task
 shadowJar {
-    // This is the critical fix.
-    // The ServiceFileTransformer correctly merges the service files from the JavaFX native libraries,
-    // allowing the application to find the correct "Glass" platform factory at runtime.
-    transformers.withType(com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer) {
-        it.path = 'META-INF/services'
-        it.include 'com.sun.glass.ui.PlatformFactory'
-        it.include 'com.sun.javafx.tk.Toolkit'
-        it.include 'com.sun.javafx.application.PlatformImpl'
-    }
-    
-    archiveClassifier.set('all') // Creates a file like 'elderguard-1.0-all.jar'
+    // **THE FIX**: This is the correct, simple way to merge the service files
+    // that JavaFX needs to find its native platform components.
+    // This resolves the "Failed to load Glass factory class" error.
+    mergeServiceFiles()
+
+    archiveClassifier.set('all')
     manifest {
         attributes 'Main-Class': 'app.Launcher'
     }
