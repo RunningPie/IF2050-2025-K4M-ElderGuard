@@ -90,7 +90,7 @@ Berikut modul beserta dengan pembagian tugas yang diimplementasikan pada proyek 
 | UserAccount & Auth |    Dama Dhananjaya D.       |
 | Pemantauan Kondisi Tubuh Lansia (Monitoring) |   Dama Dhananjaya D.          |
 | Implementasi Riwayat Medis Lansia |    Dama Dhananjaya D., Daffari Adiyatma        |
-| Implementasi Notifikasi Darurat |   Dama Dhananjaya D., Nasha Nasmia, Vincentius Vercellino T.         |
+| Implementasi Notifikasi Darurat |   Dama Dhananjaya D., Nasha Nasmia, Zachrin Afian, Vincentius Vercellino T.         |
 | Unit Testing |   Nasha Nasmia, Zachrin Afian, Vincentius Vercellino T.|
 
 
