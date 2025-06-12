@@ -34,8 +34,9 @@ jobs:
           cache: 'gradle'
 
       # Step 3: Sets up environment variables from secrets for the build process
+      # This securely uses the secret stored in your repository settings.
       - name: Set up environment variables
-        run: echo "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX" >> $GITHUB_ENV
+        run: echo "SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }}" >> $GITHUB_ENV
 
       # Step 4: Grants execute permission to the Gradle wrapper script
       - name: Grant execute permission for Gradle
@@ -55,6 +56,7 @@ jobs:
         run: ./gradlew shadowJar
 
       # Step 8: Creates launcher scripts and .env file with embedded secrets.
+      # This step only runs on the 'main' branch.
       - name: Create launcher scripts and .env file
         run: |
           # --- Create .env file ---
@@ -104,6 +106,7 @@ jobs:
           ' > build/libs/run.bat
 
       # Step 9: Uploads the generated package as a build artifact
+      # This step only runs on the 'main' branch.
       - name: Upload artifact package
         uses: actions/upload-artifact@v4
         with:
