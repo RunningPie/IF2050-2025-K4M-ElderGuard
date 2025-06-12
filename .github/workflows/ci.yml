@@ -1,5 +1,5 @@
 # GitHub Actions workflow for a Java Gradle project
-# This workflow builds the project, runs tests, and creates a distributable "fat JAR".
+# This workflow builds the project, runs tests, and creates a distributable package.
 name: ElderGuard CI
 
 # Controls when the workflow will run
@@ -33,18 +33,15 @@ jobs:
           # Caches Gradle dependencies for faster subsequent builds
           cache: 'gradle'
 
-      # Step 3: Sets up environment variables from secrets
-      # This makes the secret available to subsequent steps in the job
+      # Step 3: Sets up environment variables from secrets for the build process
       - name: Set up environment variables
         run: echo "SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }}" >> $GITHUB_ENV
 
       # Step 4: Grants execute permission to the Gradle wrapper script
-      # This is necessary for the script to be runnable in the Linux environment.
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
       # Step 5: Builds the project using the Gradle wrapper
-      # The --no-daemon flag is recommended for CI environments.
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
 
@@ -52,19 +49,65 @@ jobs:
       - name: Run tests
         run: ./gradlew test --no-daemon
 
-      # Step 7: Builds a "fat JAR" or "uber JAR" that includes all dependencies
-      # This step only runs on the 'main' branch.
-      - name: Build fat JAR (main branch only)
-        if: github.ref == 'refs/heads/main'
+      # Step 7: Builds a "fat JAR" that includes all dependencies
+      - name: Build fat JAR
         run: ./gradlew shadowJar
 
-      # Step 8: Uploads the generated JAR file as a build artifact
-      # This step only runs on the 'main' branch.
-      - name: Upload artifact (main branch only)
-        if: github.ref == 'refs/heads/main'
+      # Step 8: Creates launcher scripts with embedded secrets for easy execution
+      # WARNING: This embeds secrets directly into the scripts. This is insecure and not recommended for public distribution.
+      - name: Create launcher scripts
+        run: |
+          # --- Create Bash script for Linux/macOS ---
+          echo '#!/bin/bash
+          # WARNING: This script contains a hardcoded secret from the build environment.
+          # Script to run the ElderGuard application.
+          # Find the JAR file in the current directory.
+          JAR_FILE=$(find . -maxdepth 1 -name "*.jar" -print -quit)
+          if [ -z "$JAR_FILE" ]; then
+              echo "Error: No .jar file found in the current directory."
+              read -p "Press [Enter] to exit..."
+              exit 1
+          fi
+          echo "Found application: $JAR_FILE"
+          # Set the environment variable from the secret embedded at build time.
+          export SUPABASE_DB_URL="${{ secrets.SUPABASE_DB_URL }}"
+          echo "Starting the application..."
+          # Run the Java application.
+          java -jar "$JAR_FILE"
+          ' > build/libs/run.sh
+          # Make the bash script executable
+          chmod +x build/libs/run.sh
+
+          # --- Create Batch script for Windows ---
+          echo '@echo off
+          REM WARNING: This script contains a hardcoded secret from the build environment.
+          REM Script to run the ElderGuard application.
+          REM Find the JAR file in the current directory.
+          for %%f in (*.jar) do (
+              set JAR_FILE=%%f
+              goto found_jar
+          )
+          echo.
+          echo Error: No .jar file found in the current directory.
+          pause
+          exit /b 1
+          :found_jar
+          echo.
+          echo Found application: %JAR_FILE%
+          REM Set the environment variable from the secret embedded at build time.
+          set SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }}
+          echo.
+          echo Starting the application...
+          REM Run the Java application.
+          java -jar "%JAR_FILE%"
+          ' > build/libs/run.bat
+
+      # Step 9: Uploads the generated package as a build artifact
+      # This package includes the JAR and the launcher scripts with embedded secrets.
+      - name: Upload artifact package
         uses: actions/upload-artifact@v4
         with:
           # The name of the artifact to be uploaded
-          name: elderguard-fat-jar
-          # The path to the file(s) to upload. The wildcard (*) captures the generated JAR.
-          path: build/libs/*.jar
+          name: elderguard-package
+          # The path to the directory to upload. This uploads the JAR and both scripts.
+          path: build/libs/
