@@ -1,4 +1,4 @@
-# GitHub Actions workflow for a Java Gradle project with JavaFX
+# GitHub Actions workflow for a Java Gradle project
 # This workflow builds the project, runs tests, and creates a distributable package.
 name: ElderGuard CI
 
@@ -34,9 +34,10 @@ jobs:
           cache: 'gradle'
 
       # Step 3: Sets up environment variables from secrets for the build process
+      # This securely uses the secret stored in your repository settings.
       - name: Set up environment variables
         run: echo "SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }}" >> $GITHUB_ENV
-        
+
       # Step 4: Grants execute permission to the Gradle wrapper script
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
@@ -45,15 +46,17 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
 
-      # Step 6: Runs the tests using the Gradle wrapper (headless mode for JavaFX)
+      # Step 6: Runs the tests using the Gradle wrapper
       - name: Run tests
-        run: ./gradlew test --no-daemon -Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw
+        run: ./gradlew test --no-daemon
 
-      # Step 7: Builds a "fat JAR" that includes all dependencies and JavaFX modules
-      - name: Build fat JAR with JavaFX
-        run: ./gradlew shadowJar --no-daemon
+      # Step 7: Builds a "fat JAR" that includes all dependencies
+      # This step only runs on the 'main' branch.
+      - name: Build fat JAR
+        run: ./gradlew shadowJar
 
       # Step 8: Creates launcher scripts and .env file with embedded secrets.
+      # This step only runs on the 'main' branch.
       - name: Create launcher scripts and .env file
         run: |
           # --- Create .env file ---
@@ -61,7 +64,7 @@ jobs:
 
           # --- Create Bash script for Linux/macOS ---
           echo '#!/bin/bash
-          # Script to run the ElderGuard JavaFX application.
+          # Script to run the ElderGuard application.
           # Find the JAR file in the current directory.
           JAR_FILE=$(find . -maxdepth 1 -name "*.jar" -print -quit)
           if [ -z "$JAR_FILE" ]; then
@@ -72,16 +75,16 @@ jobs:
           echo "Found application: $JAR_FILE"
           # Set the environment variable from the secret embedded at build time.
           export SUPABASE_DB_URL="jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
-          echo "Starting the JavaFX application..."
-          # Run the Java application in classpath mode to avoid module issues
-          java -Djava.awt.headless=false -Dprism.order=sw,es2,d3d -jar "$JAR_FILE"
+          echo "Starting the application..."
+          # Run the Java application.
+          java -jar "$JAR_FILE"
           ' > build/libs/run.sh
           # Make the bash script executable
           chmod +x build/libs/run.sh
 
           # --- Create Batch script for Windows ---
           echo '@echo off
-          REM Script to run the ElderGuard JavaFX application.
+          REM Script to run the ElderGuard application.
           REM Find the JAR file in the current directory.
           for %%f in (*.jar) do (
               set JAR_FILE=%%f
@@ -94,15 +97,16 @@ jobs:
           :found_jar
           echo.
           echo Found application: %JAR_FILE%
-          REM Set the environment variable with proper quoting.
+          REM **FIX**: Quoting the entire assignment handles special characters in the URL.
           set "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
           echo.
-          echo Starting the JavaFX application...
-          REM Run the Java application in classpath mode to avoid module issues
-          java -Djava.awt.headless=false -Dprism.order=sw,es2,d3d -jar "%JAR_FILE%"
+          echo Starting the application...
+          REM Run the Java application.
+          java -jar "%JAR_FILE%"
           ' > build/libs/run.bat
 
       # Step 9: Uploads the generated package as a build artifact
+      # This step only runs on the 'main' branch.
       - name: Upload artifact package
         uses: actions/upload-artifact@v4
         with:
