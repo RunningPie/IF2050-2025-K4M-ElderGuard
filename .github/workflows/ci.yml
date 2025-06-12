@@ -60,7 +60,7 @@ jobs:
         run: |
           # --- Create .env file ---
           # This file acts as a fallback if the system environment variable is not read.
-          echo "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX" > build/libs/.env
+          echo "SUPABASE_DB_URL='jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX'" > build/libs/.env
 
           # --- Create Bash script for Linux/macOS ---
           echo '#!/bin/bash
@@ -74,7 +74,7 @@ jobs:
           fi
           echo "Found application: $JAR_FILE"
           # Set the environment variable from the secret embedded at build time.
-          export SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX
+          export SUPABASE_DB_URL="jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
           echo "Starting the application..."
           # Run the Java application.
           java -jar "$JAR_FILE"
@@ -98,7 +98,7 @@ jobs:
           echo.
           echo Found application: %JAR_FILE%
           REM Set the environment variable from the secret embedded at build time.
-          set SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX
+          set SUPABASE_DB_URL="jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX"
           echo.
           echo Starting the application...
           REM Run the Java application.
