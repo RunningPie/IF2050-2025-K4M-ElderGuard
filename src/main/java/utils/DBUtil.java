@@ -14,13 +14,25 @@ public class DBUtil {
     private static boolean connectionAvailable = false;
 
     static {
-        // Load .env file
-        dotenv = Dotenv.configure().ignoreIfMissing().load();
+        // --- This is the new logic with fallback ---
+        // 1. Prioritize the system environment variable set by run.sh/run.bat
+        String dbUrl = System.getenv("SUPABASE_DB_URL");
 
-        // Load database URL (which includes user and password as parameters)
-        URL = dotenv.get("SUPABASE_DB_URL");
+        // 2. If the system environment variable is not found, fall back to the .env file
+        if (dbUrl == null || dbUrl.trim().isEmpty()) {
+            System.out.println("System environment variable 'SUPABASE_DB_URL' not found. Attempting to load from .env file.");
+            dotenv = Dotenv.configure().ignoreIfMissing().load();
+            dbUrl = dotenv.get("SUPABASE_DB_URL");
+        } else {
+            System.out.println("Found 'SUPABASE_DB_URL' in system environment variables.");
+            // Initialize dotenv anyway in case other parts of the code use it, though it's not needed for the URL here.
+            dotenv = Dotenv.configure().ignoreIfMissing().load();
+        }
 
-        // Validate configuration
+        // 3. Assign the determined URL to the final static variable
+        URL = dbUrl;
+
+        // Validate the final configuration
         validateConfiguration();
     }
 

@@ -51,15 +51,21 @@ jobs:
 
       # Step 7: Builds a "fat JAR" that includes all dependencies
       - name: Build fat JAR
+        if: github.ref == 'refs/heads/main'
         run: ./gradlew shadowJar
 
-      # Step 8: Creates launcher scripts with embedded secrets for easy execution
+      # Step 8: Creates launcher scripts and .env file with embedded secrets.
+      # This provides two ways for the app to get the DB URL: env variable or .env file.
       # WARNING: This embeds secrets directly into the scripts. This is insecure and not recommended for public distribution.
-      - name: Create launcher scripts
+      - name: Create launcher scripts and .env file
+        if: github.ref == 'refs/heads/main'
         run: |
+          # --- Create .env file ---
+          # This file acts as a fallback if the system environment variable is not read.
+          echo "SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX" > build/libs/.env
+
           # --- Create Bash script for Linux/macOS ---
           echo '#!/bin/bash
-          # WARNING: This script contains a hardcoded secret from the build environment.
           # Script to run the ElderGuard application.
           # Find the JAR file in the current directory.
           JAR_FILE=$(find . -maxdepth 1 -name "*.jar" -print -quit)
@@ -70,7 +76,7 @@ jobs:
           fi
           echo "Found application: $JAR_FILE"
           # Set the environment variable from the secret embedded at build time.
-          export SUPABASE_DB_URL="${{ secrets.SUPABASE_DB_URL }}"
+          export SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX
           echo "Starting the application..."
           # Run the Java application.
           java -jar "$JAR_FILE"
@@ -80,7 +86,6 @@ jobs:
 
           # --- Create Batch script for Windows ---
           echo '@echo off
-          REM WARNING: This script contains a hardcoded secret from the build environment.
           REM Script to run the ElderGuard application.
           REM Find the JAR file in the current directory.
           for %%f in (*.jar) do (
@@ -95,7 +100,7 @@ jobs:
           echo.
           echo Found application: %JAR_FILE%
           REM Set the environment variable from the secret embedded at build time.
-          set SUPABASE_DB_URL=${{ secrets.SUPABASE_DB_URL }}
+          set SUPABASE_DB_URL=jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?user=postgres.pmgthoodfkhwtwxprewu&password=fDB1qgLlUvshmfpX
           echo.
           echo Starting the application...
           REM Run the Java application.
@@ -103,11 +108,12 @@ jobs:
           ' > build/libs/run.bat
 
       # Step 9: Uploads the generated package as a build artifact
-      # This package includes the JAR and the launcher scripts with embedded secrets.
+      # This package includes the JAR, launcher scripts, and the .env file.
       - name: Upload artifact package
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           # The name of the artifact to be uploaded
           name: elderguard-package
-          # The path to the directory to upload. This uploads the JAR and both scripts.
+          # The path to the directory to upload.
           path: build/libs/

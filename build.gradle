@@ -7,8 +7,6 @@ plugins {
 
 group = 'org.elderguard'
 version = '1.0'
-// It's good practice to ensure your source compatibility matches your JavaFX and JDK version.
-// Changed from 17 to 21 to match the CI environment's JDK.
 sourceCompatibility = '21'
 
 repositories {
@@ -20,11 +18,9 @@ test {
 }
 
 dependencies {
-    // Updated JavaFX dependencies to a more recent version compatible with JDK 21
     implementation 'org.openjfx:javafx-controls:21.0.2'
     implementation 'org.openjfx:javafx-fxml:21.0.2'
-
-    implementation "org.postgresql:postgresql:42.7.1"
+    implementation "org.postgresql:postgresql:42.7.3" // Consolidated to one version
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'
@@ -34,27 +30,27 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.6.0'
     testImplementation 'org.mockito:mockito-inline:5.2.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.6.0'
-    // You have two different versions of postgresql, consolidated to one
-    testImplementation 'org.postgresql:postgresql:42.7.3'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 }
 
 application {
-    // This is the crucial change.
-    // The main class for the application is now a simple "launcher" class.
-    // This class's only job is to call the main method of your actual JavaFX application class.
     mainClass = 'app.Launcher'
 }
 
 javafx {
-    // The version should match the dependencies
     version = "21.0.2"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
-// This block ensures that the fat JAR created by shadowJar
-// is correctly configured to be a runnable JavaFX application.
-jar {
+// Configure the shadowJar task
+shadowJar {
+    // This is the critical new addition.
+    // It tells shadowJar to correctly merge the service provider files
+    // that JavaFX uses to find its native platform-specific factories.
+    // This resolves the "Failed to load Glass factory class" error.
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer)
+    
+    // Ensure the manifest points to the launcher class
     manifest {
         attributes 'Main-Class': 'app.Launcher'
     }
