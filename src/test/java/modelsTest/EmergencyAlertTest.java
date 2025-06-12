@@ -3,6 +3,7 @@ package modelsTest;
 import models.EmergencyAlert;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,10 +13,11 @@ class EmergencyAlertTest {
     @Test
     void testConstructorAndGetters() {
         LocalDateTime createdAt = LocalDateTime.now();
+        UUID patientId = UUID.randomUUID();
 
         EmergencyAlert alert = new EmergencyAlert(
                 "A001", "High", "John Doe", "Cardiac Arrest",
-                "P001", "Room 101", createdAt, "Active", "Nurse1"
+                patientId, "Room 101", createdAt, "Active", "Nurse1"
         );
 
         // Cek nilai getter
@@ -23,7 +25,7 @@ class EmergencyAlertTest {
         assertEquals("High", alert.getPriority());
         assertEquals("John Doe", alert.getPatientName());
         assertEquals("Cardiac Arrest", alert.getAlertType());
-        assertEquals("P001", alert.getPatientId());
+        assertEquals(patientId, alert.getPatientId());
         assertEquals("Room 101", alert.getLocation());
         assertEquals(createdAt, alert.getCreatedAt());
         assertEquals("Active", alert.getStatus());
@@ -33,9 +35,11 @@ class EmergencyAlertTest {
     @Test
     void testSetters() {
         LocalDateTime createdAt = LocalDateTime.now();
+        UUID patientId = UUID.randomUUID();
+
         EmergencyAlert alert = new EmergencyAlert(
                 "A001", "High", "John Doe", "Cardiac Arrest",
-                "P001", "Room 101", createdAt, "Active", "Nurse1"
+                patientId, "Room 101", createdAt, "Active", "Nurse1"
         );
 
         // Ubah nilai via setter
@@ -53,9 +57,12 @@ class EmergencyAlertTest {
 
     @Test
     void testCreatedAtIsNotNull() {
+        LocalDateTime createdAt = LocalDateTime.now();
+        UUID patientId = UUID.randomUUID();
+
         EmergencyAlert alert = new EmergencyAlert(
-                "A002", "Medium", "Alice", "Fall", "P002",
-                "Room 202", LocalDateTime.now(), "Pending", "Nurse3"
+                "A001", "High", "John Doe", "Cardiac Arrest",
+                patientId, "Room 101", createdAt, "Active", "Nurse1"
         );
 
         // createdAt tidak boleh null

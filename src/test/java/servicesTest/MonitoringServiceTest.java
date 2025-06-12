@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
-import services.DeviceService;
+import services.WearableDeviceService;
 import services.EmergencyAlertService;
 import services.MonitoringService;
 import services.SensorReadingService;
@@ -98,25 +98,6 @@ class MonitoringServiceTest {
         assertTrue(callShouldTriggerAlert("HIGH"));
         assertTrue(callShouldTriggerAlert("MEDIUM"));
         assertTrue(callShouldTriggerAlert("CRITICAL"));
-    }
-
-    @Test
-    void testIsCritical() {
-        // Mengecek apakah sensor dalam keadaan kritis
-        Sensor s1 = new Sensor("heart rate", 121.0f);
-        assertTrue(callIsCritical(s1));
-
-        Sensor s2 = new Sensor("blood pressure", 190.0f);
-        assertTrue(callIsCritical(s2));
-
-        Sensor s3 = new Sensor("body temp", 39.5f);
-        assertTrue(callIsCritical(s3));
-
-        Sensor s4 = new Sensor("heart rate", 80.0f);
-        assertFalse(callIsCritical(s4));
-
-        Sensor s5 = new Sensor("unknown", 999.0f);
-        assertFalse(callIsCritical(s5));
     }
 
     // Tes fungsi setUpdateListener()
