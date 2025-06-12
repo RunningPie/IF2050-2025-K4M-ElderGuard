@@ -1,13 +1,8 @@
 package controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import models.UserAccount;
 import models.UserProfile;
 import models.Role;
@@ -15,7 +10,6 @@ import utils.SessionManager;
 import services.AuthService;
 import services.UserProfileService;
 
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
 public class LansiaAccountController extends NavigationController{
@@ -465,7 +459,7 @@ public class LansiaAccountController extends NavigationController{
             return;
         }
 
-        navigateToView("/view/LansiaDashboard.fxml", "Dashboard");
+        navigateToView("/view/LansiaDashboardView.fxml", "Dashboard");
     }
 
 
